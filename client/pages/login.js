@@ -8,9 +8,9 @@ class Login extends React.Component {
     return (
       <Layout>
         <div className="d-flex justify-content-center flex-wrap mt-5">
-          <div id="form-container">
+          <div id="form-container" className="w-100">
             <div className="w-100 d-flex justify-content-center">
-              <img className="rounded shadow" src="https://via.placeholder.com/300" alt="logo-image"/>
+              <img className="rounded shadow img-fluid" src="https://via.placeholder.com/300" alt="logo-image"/>
             </div>
             <div className="w-100 mt-5">
               <Form>
