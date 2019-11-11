@@ -3,6 +3,7 @@ import Layout from '../components/layout'
 import Form from 'react-bootstrap/Form'
 import Link from 'next/link'
 import { Alert } from 'react-bootstrap'
+import { withRouter } from 'next/router'
 
 class Code extends React.Component {
 
@@ -60,13 +61,17 @@ class Code extends React.Component {
                     content: 'Oops... It seems somthing wrong. Please check and confirm the code in your email.'
                 }
             })
-            console.log(this.state)
+            return
         }
 
+        // validated code, direct to map page
+        let { router } = this.props
+        router.push('/map')
     }
 
+    // TODO: send request to validate the code
     async validateCode(code) {
-        return false
+        return true
     }
     
     render() {
@@ -108,4 +113,4 @@ class Code extends React.Component {
     }
 }
 
-export default Code
+export default withRouter(Code)
