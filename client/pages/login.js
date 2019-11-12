@@ -10,6 +10,10 @@ class Login extends React.Component {
     this.state = {
       showAlert: false,
     }
+    let imgNum = parseInt(Math.random() * 50)
+    this.state = {
+      imgNum: imgNum
+    }
   }
   
   async handleLogin(event) {
@@ -43,7 +47,7 @@ class Login extends React.Component {
         <div className="d-flex justify-content-center flex-wrap mt-5">
           <div id="form-container" className="w-100">
             <div className="w-100 d-flex justify-content-center">
-              <img className="rounded shadow img-fluid" src="https://via.placeholder.com/300" alt="logo-image"/>
+              <img className="w-50 img-fluid" src={`/icons/icon-${this.state.imgNum}.svg`} alt="logo-image"/>
             </div>
             <div className="w-100 mt-5">
               <Form id="login-form" onSubmit={event => event.preventDefault()}>
@@ -60,6 +64,9 @@ class Login extends React.Component {
                 #form-container {
                   max-width: 400px;
                 }
+              }
+              img {
+                filter: drop-shadow(5px 5px 5px #222);
               }
             `}</style>
           </div>

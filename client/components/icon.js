@@ -29,11 +29,13 @@ class Icon extends React.Component {
                     text-align: center;
                     font-size: 16px;
                     color: white;
+                    letter-spacing: 0.1rem;
                     text-shadow: 2px 0 0 #666, -2px 0 0 #666, 0 2px 0 #666, 0 -2px 0 #666, 1px 1px #666, -1px -1px 0 #666, 1px -1px 0 #666, -1px 1px 0 #666;
                 }
                 img {
                     width: 100%;
                     height: 100%;
+                    filter: drop-shadow(3px 3px 2px #222);
                 }
             `}</style>
             </div>
