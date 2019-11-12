@@ -25,8 +25,6 @@ class Index extends React.Component {
     }
 
     render() {
-        const router = this.props.router
-        console.log(router)
         return (
             <Layout>
                 <div id="spinner" className="d-flex justify-content-center align-items-center">
@@ -35,6 +33,7 @@ class Index extends React.Component {
                 <style jsx>{`
                     #spinner {
                         top: 0;
+                        left: 0;
                         position: absolute;
                         height: 100%;
                         width: 100%;
