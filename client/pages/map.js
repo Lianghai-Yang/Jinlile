@@ -46,7 +46,6 @@ class Map extends React.Component {
             this.setCenter(position)
         })
 
-        this.getMarkers()
         this.watchMarkers()
     }
 
