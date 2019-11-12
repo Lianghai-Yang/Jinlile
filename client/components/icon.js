@@ -12,7 +12,7 @@ class Icon extends React.Component {
     
     render() {
         let { name } = this.props
-        let length = parseInt(500 / this.props.zoom)
+        let length = parseInt(650 / this.props.zoom)
         return (
             <div className="marker-container">
             <img src={`/icons/icon-${this.simpleHash(name)}.svg`} alt="user"/>
