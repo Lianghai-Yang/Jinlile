@@ -47,6 +47,7 @@ class Map extends React.Component {
         })
 
         this.getMarkers()
+        this.watchMarkers()
     }
 
     handleDrapEnd(map) {
@@ -59,6 +60,11 @@ class Map extends React.Component {
             { name: 'Eric', lat: 40.747139, lng: -74.0306601 },
             { name: 'Amy', lat: 40.7335799, lng: -74.0345654 },
         ]
+    }
+
+    async watchMarkers() {
+        await this.getMarkers()
+        setTimeout(() => this.watchMarkers(), 6000)
     }
     
     async getMarkers(zoom=14) {
