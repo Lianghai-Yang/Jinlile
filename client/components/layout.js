@@ -3,8 +3,13 @@ import Head from 'next/head'
 import Nav from '../components/nav'
 import { Container } from 'react-bootstrap'
 import { start } from '../events'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 class Layout extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+  
   componentDidMount() {
     start()
   }
@@ -15,7 +20,7 @@ class Layout extends React.Component {
         <Head>
           <title>Jinlile</title>
         </Head>
-        <Nav />
+        <Nav sideIconRight={this.props.sideIconRight} sideIconLeft={this.props.sideIconLeft} />
         <Container>
           {this.props.children}
         </Container>
