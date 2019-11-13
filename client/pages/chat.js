@@ -125,9 +125,9 @@ class Chat extends React.Component {
                 </Container>
                 <style>{`
                     .message-box {
-                        // position: relative;
-                        // top: 10px;
-                        // max-width: 60%;
+                        position: relative;
+                        top: 10px;
+                        max-width: 60%;
                     }
                     .right {
                         order: 1;
@@ -140,7 +140,7 @@ class Chat extends React.Component {
                         overflow-y: auto;
                     }
                     .input-box {
-                        width: 100%;
+                        // width: 100%;
                         // bottom: 0;
                         // position: fixed;
                         // left: 0;
