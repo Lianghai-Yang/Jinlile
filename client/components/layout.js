@@ -15,13 +15,14 @@ class Layout extends React.Component {
   }
   
   render() {
+    let { title } = this.props
     return (
       <>
         <Head>
-          <title>Jinlile</title>
+          <title>{title ? title : 'Jinlile'}</title>
         </Head>
-        <Nav sideIconRight={this.props.sideIconRight} sideIconLeft={this.props.sideIconLeft} />
-        <Container>
+        <Nav sideIconRight={this.props.sideIconRight} sideIconLeft={this.props.sideIconLeft} title={title} />
+        <Container fluid={true}>
           {this.props.children}
         </Container>
       </>

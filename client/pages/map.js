@@ -3,12 +3,14 @@ import Layout from '../components/layout'
 import GoogleMapReact from 'google-map-react'
 import { Alert, Button } from 'react-bootstrap'
 import events, { position } from '../events'
-import Icon from '../components/icon'
+import Marker from '../components/marker'
 import Spinner from 'react-bootstrap/Spinner'
 import { FaBars, FaComments, FaPaperPlane } from 'react-icons/fa'
 import Form from "react-bootstrap/Form";
 import InputGroup from 'react-bootstrap/InputGroup'
 import Toast from 'react-bootstrap/Toast'
+import { withRouter } from 'next/router'
+import Icon from '../components/icon'
 
 const config = require('../jinlile.config')
 
@@ -80,26 +82,26 @@ class Map extends React.Component {
     
     async getMarkers(zoom=14) {
         let myself = (
-            <Icon
+            <Marker
                 name="You"
                 iconIndex={this.simpleHash("You")}
                 lat={this.state.center.lat}
                 lng={this.state.center.lng}
                 key="You"
                 zoom={14}
-            ></Icon>
+            ></Marker>
         )
         let markers = [myself]
         for (let f of await this.getFriendsPosition()) {
             markers.push(
-                <Icon
+                <Marker
                     name={f.name}
                     iconIndex={this.simpleHash(f.name)}
                     lat={f.lat}
                     lng={f.lng}
                     key={f.name}
                     zoom={14}
-                ></Icon>
+                ></Marker>
             )
         }
         this.setState({
@@ -130,8 +132,9 @@ class Map extends React.Component {
     }
 
     sideIconleft() {
+        let { router } = this.props
         return (
-            <FaComments color="#007bff" size="1.5rem" className="flex-grow-0" />
+            <FaComments color="#007bff" size="1.5rem" onClick={() => router.push('/chat')} className="flex-grow-0" />
         )
     }
 
@@ -152,12 +155,7 @@ class Map extends React.Component {
             <>
             <Toast className="mt-3" style={{ display: show ? 'block' : 'none' }} show={show} onClose={() => this.setState({ ...this.state, toast: newToastState })}>
                 <Toast.Header>
-                    <img
-                    src={`/icons/icon-${from==''?1:this.simpleHash(from)}.svg`}
-                    className="rounded mr-2"
-                    alt=""
-                    style={{ width: '20px', height: '20px' }}
-                    />
+                    <Icon name={from} className="rounded mr-2" style={{ width: '20px', height: '20px' }} />
                     <strong className="mr-auto">{from}</strong>
                     <small>{time}</small>
                 </Toast.Header>
@@ -249,4 +247,4 @@ class Map extends React.Component {
     }
 }
 
-export default Map
+export default withRouter(Map)
