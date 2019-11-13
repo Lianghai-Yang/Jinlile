@@ -27,7 +27,6 @@ class JinlileNav extends React.Component {
           <div className="flex-grow-0">
             {this.state.sideIconRight()}
           </div>
-          {/* <FaBars className="flex-grow-0" /> */}
         </Navbar>
       </>
     )

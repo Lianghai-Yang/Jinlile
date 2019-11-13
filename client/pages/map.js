@@ -214,7 +214,7 @@ class Map extends React.Component {
                             <Form.Control id="message-input" size="lg" placeholder="Message..."></Form.Control>
                             <InputGroup.Append>
                                 <Button as="div" onClick={this.sendMessage.bind(this)} variant="primary">
-                                    <FaPaperPlane size="2rem" />
+                                    <FaPaperPlane style={{width: '2rem', fontSize: '1.3rem'}} />
                                 </Button>
                             </InputGroup.Append>
                         </InputGroup>
