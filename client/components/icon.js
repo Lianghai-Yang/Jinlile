@@ -1,21 +1,13 @@
 import React from 'react'
 
 class Icon extends React.Component {
-
-    simpleHash(name='') {
-        let sum = 0;
-        for (let i = 0; i < name.length; i++) {
-            sum += name.charCodeAt(i)
-        }
-        return sum % 50 + 1
-    }
     
     render() {
-        let { name } = this.props
+        let { name, iconIndex } = this.props
         let length = parseInt(650 / this.props.zoom)
         return (
             <div className="marker-container">
-                <img src={`/icons/icon-${this.simpleHash(name)}.svg`} alt="user"/>
+                <img src={`/icons/icon-${iconIndex}.svg`} alt="user"/>
                 <div>{name}</div>
                 <style jsx scoped>{`
                     .marker-container {
