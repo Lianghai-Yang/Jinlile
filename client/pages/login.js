@@ -7,11 +7,9 @@ import { withRouter } from 'next/router'
 class Login extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      showAlert: false,
-    }
     let imgNum = parseInt(Math.random() * 50)
     this.state = {
+      showAlert: false,
       imgNum: imgNum
     }
   }
@@ -23,7 +21,7 @@ class Login extends React.Component {
     } 
     this.showAlert(false)
     let result = await this.sendCode()
-    this.props.router.push('/code')
+    this.props.router.replace('/code')
   }
 
   showAlert(show=true) {

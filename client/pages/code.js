@@ -66,7 +66,7 @@ class Code extends React.Component {
 
         // validated code, direct to map page
         let { router } = this.props
-        router.push('/map')
+        router.replace('/groups')
     }
 
     // TODO: send request to validate the code

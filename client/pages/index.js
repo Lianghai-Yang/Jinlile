@@ -9,10 +9,10 @@ class Index extends React.Component {
         const router = this.props.router
         let auth = await this.auth()
         if (auth == false) {
-            router.push('/login')
+            router.replace('/login')
         }
         else {
-            router.push('/map')
+            router.replace('/map')
         }
     }
 
