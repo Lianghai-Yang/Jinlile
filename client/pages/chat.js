@@ -83,25 +83,29 @@ class Chat extends React.Component {
     }
 
     sendMessage() {
-        let textAreaArr = Array.from(document.getElementsByTagName('textarea'))
+        let textAreaArr = this.refs.input.input
         this.addMessage({
             title: "You",
             position: "right",
             type: "text",
-            text: textAreaArr[0].value,
+            text: textAreaArr.value,
             date: new Date()
         })
-        textAreaArr[0].value = ''
+        console.log(this.refs)
+        this.refs.input.clear()
     }
     
     render() {
         return (
             <Layout title={this.state.groupName} sideIconLeft={this.sideIconLeft} sideIconRight={this.sideIconRight}>
                 <div>
-                    {this.messageList()}
 
-                    <div className="input-box">
+                    <div className="chat-body" style={{ marginBottom: '100px' }}>
+                        {this.messageList()}
+                    </div>
+                    <div className="input-box mt-5">
                         <Input
+                            ref='input'
                             placeholder="Enter message here..."
                             multiline={true}
                             inputStyle={{ backgroundColor: '#eee' }}
@@ -127,7 +131,7 @@ class Chat extends React.Component {
                         }
                         .input-box {
                             width: 100%;
-                            bottom: 2rem;
+                            bottom: 0;
                             position: fixed;
                             left: 0;
                             padding: 0 0.5rem 0 0.5rem;
