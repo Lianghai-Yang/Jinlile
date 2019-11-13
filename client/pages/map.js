@@ -153,13 +153,13 @@ class Map extends React.Component {
         }
         return (
             <>
-            <Toast className="mt-3" style={{ display: show ? 'block' : 'none' }} show={show} onClose={() => this.setState({ ...this.state, toast: newToastState })}>
+            <Toast className="mt-3 align-self-center" style={{ display: show ? 'block' : 'none', zIndex: 1, width: '300px' }} show={show} onClose={() => this.setState({ ...this.state, toast: newToastState })}>
                 <Toast.Header>
                     <Icon name={from} className="rounded mr-2" style={{ width: '20px', height: '20px' }} />
                     <strong className="mr-auto">{from}</strong>
                     <small>{time}</small>
                 </Toast.Header>
-                <Toast.Body>{msg}</Toast.Body>
+                <Toast.Body style={{ wordBreak: 'break-word' }}>{msg}</Toast.Body>
             </Toast>
             </>
         )
@@ -185,11 +185,12 @@ class Map extends React.Component {
                         <span className="sr-only">Loading...</span>
                     </Spinner>
                 </div>
-                <small className="text-muted">Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></small>
+                <small style={{ zIndex: 1 }} className="text-muted">Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></small>
                 <Alert
                     dismissible
                     show={this.state.alert.show}
                     onClose={ () => this.setState({ ...this.state, alert: {show: false, content: ''} }) }
+                    style={{ zIndex: 1 }}
                     variant="danger">
                     Test
                 </Alert>
@@ -225,7 +226,7 @@ class Map extends React.Component {
                         position: fixed;
                         height: 100%;
                         width: 100%;
-                        z-index: -999;
+                        z-index: 0;
                     }
                     #message-input-container {
                         position: relative;

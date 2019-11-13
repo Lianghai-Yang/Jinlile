@@ -21,10 +21,17 @@ class Layout extends React.Component {
         <Head>
           <title>{title ? title : 'Jinlile'}</title>
         </Head>
-        <Nav sideIconRight={this.props.sideIconRight} sideIconLeft={this.props.sideIconLeft} title={title} />
-        <Container fluid={true}>
-          {this.props.children}
-        </Container>
+        <div className="position-absolute d-flex flex-column h-100 w-100">
+          <Nav sideIconRight={this.props.sideIconRight} sideIconLeft={this.props.sideIconLeft} title={title} />
+          <div className="flex-grow-1 d-flex flex-column flex-shrink-0">
+            {this.props.children}
+          </div>
+        </div>
+        <style>{`
+          nav {
+            z-index: 1;
+          }
+        `}</style>
       </>
     )
   }

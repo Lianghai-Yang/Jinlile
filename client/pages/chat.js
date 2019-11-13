@@ -5,6 +5,7 @@ import { MessageBox, Input, Button } from 'react-chat-elements'
 import 'react-chat-elements/dist/main.css'
 import Icon from '../components/icon'
 import { FaPaperPlane } from 'react-icons/fa'
+import { Container } from 'react-bootstrap'
 
 class Chat extends React.Component {
     constructor(props) {
@@ -62,8 +63,8 @@ class Chat extends React.Component {
         for (let i = 0; i < messages.length; i ++) {
             let msg = messages[i]
             list.push(
-                <div className={`d-flex mt-4 ${msg.position}-box`} key={`msg-${i}`}>
-                    <Icon className={msg.position} name={msg.title} style={{ width: '28px', height: '28px' }} />
+                <div className={`d-flex mb-4 ${msg.position}-box`} key={`msg-${i}`}>
+                    <Icon className={msg.position} name={msg.title} style={{ width: '28px', height: '28px', flexShrink: 0 }} />
                     <MessageBox
                         className="flex-grow-1 flex-shrink-1 message-box"
                         width="100"
@@ -79,6 +80,12 @@ class Chat extends React.Component {
         this.setState({
             ...this.state,
             messages: [...this.state.messages, msg]
+        }, () => {
+            this.refs.chatBody.scrollTo({
+                top: this.refs.chatBody.scrollHeight,
+                left: 0,
+                behavior: 'smooth'
+            })
         })
     }
 
@@ -91,19 +98,17 @@ class Chat extends React.Component {
             text: textAreaArr.value,
             date: new Date()
         })
-        console.log(this.refs)
         this.refs.input.clear()
     }
     
     render() {
         return (
             <Layout title={this.state.groupName} sideIconLeft={this.sideIconLeft} sideIconRight={this.sideIconRight}>
-                <div>
-
-                    <div className="chat-body" style={{ marginBottom: '100px' }}>
+                <Container fluid={true} className="d-flex flex-column flex-grow-1 flex-shrink-0" style={{height: '0 !important', overflow: 'hidden'}}>
+                    <div ref="chatBody" className="chat-body mt-3 flex-grow-1 flex-shrink-0">
                         {this.messageList()}
                     </div>
-                    <div className="input-box mt-5">
+                    <div className="input-box flex-shrink-1 mb-3">
                         <Input
                             ref='input'
                             placeholder="Enter message here..."
@@ -117,27 +122,31 @@ class Chat extends React.Component {
                             }
                         />
                     </div>
-                    <style>{`
-                        .message-box {
-                            position: relative;
-                            top: 10px;
-                            // max-width: 60%;
-                        }
-                        .right {
-                            order: 1;
-                        }
-                        .right-box {
-                            justify-content: flex-end;
-                        }
-                        .input-box {
-                            width: 100%;
-                            bottom: 0;
-                            position: fixed;
-                            left: 0;
-                            padding: 0 0.5rem 0 0.5rem;
-                        }
-                    `}</style>
-                </div>
+                </Container>
+                <style>{`
+                    .message-box {
+                        // position: relative;
+                        // top: 10px;
+                        // max-width: 60%;
+                    }
+                    .right {
+                        order: 1;
+                    }
+                    .right-box {
+                        justify-content: flex-end;
+                    }
+                    .chat-body {
+                        height: 0 !important;
+                        overflow-y: auto;
+                    }
+                    .input-box {
+                        width: 100%;
+                        // bottom: 0;
+                        // position: fixed;
+                        // left: 0;
+                        padding: 0 0.5rem 0 0.5rem;
+                    }
+                `}</style>
             </Layout>
         )
 
