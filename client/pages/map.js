@@ -52,7 +52,6 @@ class Map extends React.Component {
         }
 
         let center = await position.getCurrentPosition()
-
         // Set the map to current location
         this.setCenter(center)
 
