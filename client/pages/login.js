@@ -1,7 +1,7 @@
 import React from 'react'
 import Layout from "../components/layout";
 import Form from "react-bootstrap/Form";
-import { Button, Alert } from 'react-bootstrap'
+import { Button, Alert, Container } from 'react-bootstrap'
 import { withRouter } from 'next/router'
 
 class Login extends React.Component {
@@ -42,6 +42,7 @@ class Login extends React.Component {
   render() {
     return (
       <Layout>
+        <Container>
         <div className="d-flex justify-content-center flex-wrap mt-5">
           <div id="form-container" className="w-100">
             <div className="w-100 d-flex justify-content-center">
@@ -69,6 +70,7 @@ class Login extends React.Component {
             `}</style>
           </div>
         </div>
+        </Container>
       </Layout>
     )
   }

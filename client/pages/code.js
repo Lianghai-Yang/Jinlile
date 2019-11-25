@@ -2,7 +2,7 @@ import React from "react";
 import Layout from '../components/layout'
 import Form from 'react-bootstrap/Form'
 import Link from 'next/link'
-import { Alert } from 'react-bootstrap'
+import { Alert, Container } from 'react-bootstrap'
 import { withRouter } from 'next/router'
 
 class Code extends React.Component {
@@ -78,36 +78,38 @@ class Code extends React.Component {
         let inputSize = '4rem'
         return (
             <Layout>
-                <style type="text/css">{`
-                    .number-input {
-                        width: ${inputSize};
-                        height: ${inputSize};
-                        font-size: ${inputSize};
-                        text-align: center;
-                    }
-
-                    @media (min-width: 768px) {
-                        .input-container {
-                            max-width: 300px;
+                <Container>
+                    <style type="text/css">{`
+                        .number-input {
+                            width: ${inputSize};
+                            height: ${inputSize};
+                            font-size: ${inputSize};
+                            text-align: center;
                         }
-                    }
-                `}</style>
 
-                <div className="mt-5 d-flex justify-content-center flex-wrap">
-                    <div className="input-container">
-                        <p className="text-muted">We have sent an email to you. <br /> Please enter the code in your email below:</p>
-                        <div className="d-flex justify-content-center mt-5">
-                            <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
-                            <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
-                            <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
-                            <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
+                        @media (min-width: 768px) {
+                            .input-container {
+                                max-width: 300px;
+                            }
+                        }
+                    `}</style>
+
+                    <div className="mt-5 d-flex justify-content-center flex-wrap">
+                        <div className="input-container">
+                            <p className="text-muted">We have sent an email to you. <br /> Please enter the code in your email below:</p>
+                            <div className="d-flex justify-content-center mt-5">
+                                <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
+                                <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
+                                <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
+                                <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
+                            </div>
+                            <p className="text-muted mt-5">Or you would like to change your email address? Click <Link replace href="/login"><a>HERE</a></Link> </p>
                         </div>
-                        <p className="text-muted mt-5">Or you would like to change your email address? Click <Link replace href="/login"><a>HERE</a></Link> </p>
+                        <Alert show={this.state.alert.show} variant="dark" dismissible onClose={() => this.setState({...this.state, alert:{show: false}})}>
+                            {this.state.alert.content}
+                        </Alert>
                     </div>
-                    <Alert show={this.state.alert.show} variant="dark" dismissible onClose={() => this.setState({...this.state, alert:{show: false}})}>
-                        {this.state.alert.content}
-                    </Alert>
-                </div>
+                </Container>
             </Layout>
         )
     }
