@@ -75,16 +75,17 @@ class Code extends React.Component {
     }
     
     render() {
-        let inputSize = '4rem'
+        let inputSize = '4'
         return (
             <Layout>
                 <Container>
                     <style type="text/css">{`
                         .number-input {
-                            width: ${inputSize};
-                            height: ${inputSize};
-                            font-size: ${inputSize};
+                            width: ${inputSize}rem;
+                            height: ${inputSize}rem;
+                            font-size: ${inputSize - 1}rem;
                             text-align: center;
+                            line-height: 0;
                         }
 
                         @media (min-width: 768px) {

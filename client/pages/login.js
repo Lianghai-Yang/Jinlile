@@ -46,7 +46,7 @@ class Login extends React.Component {
         <div className="d-flex justify-content-center flex-wrap mt-5">
           <div id="form-container" className="w-100">
             <div className="w-100 d-flex justify-content-center">
-              <img className="w-50 img-fluid" src={`/icons/icon-${this.state.imgNum}.svg`} alt="logo-image"/>
+              <img className="w-50 h-50 img-fluid" src={`/icons/icon-${this.state.imgNum}.svg`} alt="logo-image"/>
             </div>
             <div className="w-100 mt-5">
               <Form id="login-form" onSubmit={event => event.preventDefault()}>

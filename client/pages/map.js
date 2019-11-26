@@ -76,7 +76,7 @@ class Map extends React.Component {
 
     async watchMarkers() {
         await this.getMarkers()
-        setTimeout(() => this.watchMarkers(), 6000)
+        setTimeout(() => this.watchMarkers(), 3000)
     }
     
     async getMarkers(zoom=14) {
