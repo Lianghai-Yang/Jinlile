@@ -12,6 +12,10 @@ export function getCurrentPosition() {
         }, err => {
            console.log(err) 
            reject(err)
+        }, {
+            maximumAge: 0,
+            timeout: 3000,
+            enableHighAccuracy: true,
         })
     })
 }
