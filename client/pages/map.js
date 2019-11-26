@@ -19,7 +19,8 @@ class Map extends React.Component {
         super(props)
         this.state = {
             center: { lat: 40.7448501, lng: -74.027187 },
-            defaultCenter: { lat: 40.7448501, lng: -74.027187 },
+            defaultCenter: null,
+            // defaultCenter: { lat: 40.7448501, lng: -74.027187 },
             alert: { show: false, content: '' },
             markers: [],
             loading: true,
@@ -54,7 +55,9 @@ class Map extends React.Component {
         let center = await position.getCurrentPosition()
         // Set the map to current location
         this.setCenter(center)
-
+        this.setState({
+            defaultCenter: center
+        })
         events.on('position', position => {
             this.setCenter(position)
         })
@@ -194,6 +197,8 @@ class Map extends React.Component {
                     Test
                 </Alert>
                 {this.toast()}
+                {(this.state.defaultCenter != null) 
+                ?
                 <div id="map-container">
                     <GoogleMapReact
                         onGoogleApiLoaded={this.setLoading.bind(this, false)}
@@ -202,7 +207,7 @@ class Map extends React.Component {
                         defaultZoom={14}
                         options={{zoomControl:false}}
                         defaultCenter={this.state.defaultCenter}
-                        center={this.state.center}
+                        // center={this.state.center}
                         onDragEnd={this.handleDrapEnd.bind(this)}
                     >
                         {this.state.markers}
@@ -217,7 +222,8 @@ class Map extends React.Component {
                             </InputGroup.Append>
                         </InputGroup>
                     </div>
-                </div>
+                </div> : ''
+                }
                 <style jsx>{`
                     #map-container {
                         top: 0;
