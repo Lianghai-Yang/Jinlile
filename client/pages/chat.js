@@ -1,8 +1,8 @@
+import 'react-chat-elements/dist/main.css'
 import React from 'react'
 import Layout from '../components/layout'
 import { FaAngleLeft, FaBars } from "react-icons/fa";
 import { MessageBox, Input, Button } from 'react-chat-elements'
-import 'react-chat-elements/dist/main.css'
 import Icon from '../components/icon'
 import { FaPaperPlane } from 'react-icons/fa'
 import { Container } from 'react-bootstrap'

@@ -1,6 +1,6 @@
 import event from './index'
 
-const interval = 6000
+const interval = 3000
 
 export function getCurrentPosition() {
     return new Promise((resolve, reject) => {

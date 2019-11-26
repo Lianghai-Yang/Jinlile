@@ -17,6 +17,7 @@ const config = require('../jinlile.config')
 class Map extends React.Component {
     constructor(props) {
         super(props)
+        this.watching = true
         this.state = {
             center: { lat: 40.7448501, lng: -74.027187 },
             defaultCenter: null,
@@ -34,10 +35,15 @@ class Map extends React.Component {
     }
 
     setCenter(center) {
+        if (this.watching == false) return
         this.setState({
-            ...this.state,
             center
         })
+    }
+
+    componentWillUnmount() {
+        this.watching = false
+        events.removeAllListeners('position', () => console.log('removed all position'))
     }
     
     async componentDidMount() {
@@ -79,6 +85,7 @@ class Map extends React.Component {
 
     async watchMarkers() {
         await this.getMarkers()
+        if (this.watching == false) return
         setTimeout(() => this.watchMarkers(), 3000)
     }
     
@@ -106,6 +113,7 @@ class Map extends React.Component {
                 ></Marker>
             )
         }
+        if (this.watching == false) return
         this.setState({
             ...this.state,
             markers
@@ -122,7 +130,7 @@ class Map extends React.Component {
     
     setLoading(loading) {
         this.setState({
-            ...this.state,
+            // ...this.state,
             loading
         })
     }
@@ -136,7 +144,7 @@ class Map extends React.Component {
     sideIconleft() {
         let { router } = this.props
         return (
-            <FaComments color="#007bff" size="1.5rem" onClick={() => router.push('/chat')} className="flex-grow-0" />
+            <FaComments color="#007bff" size="1.5rem" onClick={() => window.location.href='/chat'} className="flex-grow-0" />
         )
     }
 
@@ -191,7 +199,7 @@ class Map extends React.Component {
                 <Alert
                     dismissible
                     show={this.state.alert.show}
-                    onClose={ () => this.setState({ ...this.state, alert: {show: false, content: ''} }) }
+                    onClose={ () => this.setState({ alert: {show: false, content: ''} }) }
                     style={{ zIndex: 1 }}
                     variant="danger">
                     Test
