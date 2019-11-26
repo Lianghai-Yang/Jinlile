@@ -14,7 +14,7 @@ export function getCurrentPosition() {
            reject(err)
         }, {
             maximumAge: 0,
-            timeout: 3000,
+            timeout: 6000,
             enableHighAccuracy: true,
         })
     })
