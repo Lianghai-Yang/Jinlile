@@ -19,6 +19,7 @@ class Layout extends React.Component {
     return (
       <>
         <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1 user-scalable=no"/>
           <title>{title ? title : 'Jinlile'}</title>
         </Head>
         <div className="position-absolute d-flex flex-column h-100 w-100">
