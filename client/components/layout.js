@@ -10,7 +10,6 @@ class Layout extends React.Component {
   }
   
   componentDidMount() {
-    document.body.requestFullscreen()
     start()
   }
   
