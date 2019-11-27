@@ -1,7 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
 import Nav from '../components/nav'
-import { Container } from 'react-bootstrap'
 import { start } from '../events'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -11,6 +10,7 @@ class Layout extends React.Component {
   }
   
   componentDidMount() {
+    document.body.requestFullscreen()
     start()
   }
   
