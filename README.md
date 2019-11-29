@@ -6,16 +6,15 @@
 ### Database Structure
 
 ```bash
--- database  
-  |-- src
-  |   |-- groups.js
-  |   |-- index.js
-  |   |-- mongoCollections.js
-  |   |-- mongoConnection.js
-  |   |-- users.js
-  |
-  |-- task
-      |-- seed.js
+└── database  
+    ├── src
+    │   ├── groups.js
+    │   ├── mongoCollections.js
+    │   ├── mongoConnection.js
+    │   ├── users.js
+    │   └── index.js
+    └── task
+        └── seed.js
 
 ```
         
