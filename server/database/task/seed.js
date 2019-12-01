@@ -8,24 +8,24 @@ const main = async () => {
     const db = await dbConnection();
     await db.dropDatabase();
     try{
-        let JG = await users.create("Jiacheng Guo", "guojiacheng.bupt@gmail.com", [],"default");
-        let YL = await users.create("Yi Li", "liyicynthia@gmail.com", [],"default");
-        let tester = await users.create("tester", "tester@gmail.com",[],"default");
-        let group1 = await groups.create("Group1", [], []);
-        let group2 = await groups.create("Group2", [], []);
+        let Yang = await users.create("Yang", "Yang@gmail.com", [],"default");
+        let Wang = await users.create("Wang", "Wang@gmail.com", [],"default");
+        let Guo = await users.create("Guo", "Guo@gmail.com", [],"default");
+        let group1 = await groups.create("Colleagues", [], []);
+        let group2 = await groups.create("Hiking Team", [], []);
 
-        await groups.addUserToGroup(group1.name,JG._id,JG.name);
-        await groups.addUserToGroup(group1.name,YL._id,YL.name);
-        await groups.addUserToGroup(group2.name,tester._id,tester.name);
+        await groups.addUserToGroup(group1.name,Yang._id,Yang.name);
+        await groups.addUserToGroup(group1.name,Wang._id,Wang.name);
+        await groups.addUserToGroup(group2.name,Guo._id,Guo.name);
+        
+        await users.addGroupToUser(Wang.name,group1._id,group1.name);
+        await users.addGroupToUser(Yang.name,group1._id,group1.name);
+        await users.addGroupToUser(Guo.name,group2._id,group2.name);
 
-        await users.addGroupToUser(JG.name,group1._id,group1.name);
-        await users.addGroupToUser(YL.name,group1._id,group1.name);
-        await users.addGroupToUser(tester.name,group2._id,group2.name);
-
-        await groups.addMessageToGroup(group1.name,JG._id,JG.name,"hello guys in group1", "Nov 8th, 2019, 7:00 PM");
-        await groups.addMessageToGroup(group1.name,JG._id,JG.name,"Im Jiacheng", "Nov 8th, 2019, 7:01 PM");
-        await groups.addMessageToGroup(group2.name,tester._id,tester.name,"hello guys in group2", "Nov 8th, 2019, 7:02 PM");
-        //await groups.addMessageToGroup(group2.name,YL._id,YL.name,"hello guys in group2, I'm Yi Li", "Nov 8th, 2019, 7:02 PM");
+        await groups.addMessageToGroup(group1.name,Yang._id,Yang.name,"hello guys in Colleagues from Yang", new Date() );
+        await groups.addMessageToGroup(group1.name,Wang._id,Wang.name,"Im Wang", new Date() );
+        await groups.addMessageToGroup(group2.name,Guo._id,Guo.name,"hello guys in Hiking Team", new Date() );
+        
         await db.serverConfig.close();
     }
     catch(e){

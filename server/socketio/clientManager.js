@@ -1,4 +1,8 @@
-const userTemplates = require('./config/users')
+// const userTemplates = require('./config/users')
+
+const data = require("../database/src");
+const users = data.users;
+// const groups = data.groups;
 
 module.exports = function () {
   // mapping of all connected clients
@@ -27,11 +31,19 @@ module.exports = function () {
   }
 
   function isUserAvailable(userName) {
-    return getAvailableUsers().some(u => u.name === userName)
+    const usersTaken = new Set(
+      Array.from(clients.values())
+        .filter(c => c.user)
+        .map(c => c.user.name)
+    )
+    return !usersTaken.has(userName)
+
+    // return getAvailableUsers().some(u => u.name === userName)
   }
 
-  function getUserByName(userName) {
-    return userTemplates.find(u => u.name === userName)
+  async function getUserByName(userName) {
+    return await users.getByUserName(userName)
+    // return userTemplates.find(u => u.name === userName)
   }
 
   function getUserByClientId(clientId) {
