@@ -5,16 +5,16 @@
 
 ### Database Structure
 
-```bash
-└── database  
-    ├── src
-    │   ├── groups.js
-    │   ├── mongoCollections.js
-    │   ├── mongoConnection.js
-    │   ├── users.js
-    │   └── index.js
-    └── task
-        └── seed.js
-
 ```
-        
+users {
+    _id: String,
+    name: String,
+    email: String,
+    groups: Groups[],
+    email_code: String,
+}
+
+groups {
+    _id: String
+}
+```
