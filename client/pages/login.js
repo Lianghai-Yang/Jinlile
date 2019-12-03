@@ -37,7 +37,7 @@ class Login extends React.Component {
 
   async sendCode(email) {
     let params = {email:email};
-    const response = await axios.post(`http://localhost:3001/users/code`,params);
+    const response = await axios.post(`/users/code`,params);
     const code = response.data;
     console.log(code);
     localStorage.setItem('email', email);

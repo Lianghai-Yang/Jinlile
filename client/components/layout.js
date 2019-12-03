@@ -3,6 +3,10 @@ import Head from 'next/head'
 import Nav from '../components/nav'
 import { start } from '../events'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import axios from 'axios'
+axios.defaults.baseURL = 'http://localhost:4000';
+
+
 
 class Layout extends React.Component {
   constructor(props) {

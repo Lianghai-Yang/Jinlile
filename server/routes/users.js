@@ -25,23 +25,25 @@ router.get("/code", async (req, res) => {
 router.post("/code", async (req,res) => {
   console.log("we hit router post code")
   const emailInfo = req.body;
-    if (!emailInfo) {
-        res.status(400).json({ error: "You must provide email to create its code" });
-        return;
-    }
-    
-    if (!emailInfo.email) {
-      res.status(400).json({ error: "You must provide an email" });
-      return;
-    }
+  let { email } = emailInfo
+  if (!email) {
+    res.status(400).send({ msg: 'missing email' })
+  }
 
-    try{
-      const email = emailInfo.email;
-      const code = await userData.createCode(email);
-      res.json(code);
-    }catch(e){
-      res.sendStatus(500);
-    }
+  if (validator.isEmail(email) == false) {
+    return res.status(400).send({ msg: 'invalid email' })
+  }
+
+  try{
+    // const email = emailInfo.email;
+    const code = await userData.createCode(email);
+    // res.json(code);
+    res.send({ msg: 'sent' })
+    console.log(code)
+    mailCode({ code, email })
+  }catch(e){
+    res.sendStatus(500);
+  }
 });
 
 router.get("/", async (req,res) =>{
@@ -64,32 +66,14 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post(`/code`, async (req, res, next) => {
-  let { email } = req.body
-  if (!email) {
-    res.status(400).send({ msg: 'missing email' })
-  }
-
-  if (validator.isEmail(email) == false) {
-    return res.status(400).send({ msg: 'invalid email' })
-  }
-
-  let code = 1234
-  try {
-    let info = await mailer.sendMail({
-      from: '"Jinlile Team" <team@jinlile.tech>',
-      to: email,
-      subject: `Your Login Code is ${code}`,
-      text: `Thank you for using Jinlile. Your login code is ${code}`
-    })
-    console.log('message sent')
-    console.log(info)
-  }
-  catch(e) {
-    return res.status(500).send(e.message)
-  }
-
-  res.send({ msg: 'Your code has been sent to you email' })
-})
+async function mailCode({ email, code }) {
+  let info = await mailer.sendMail({
+    from: '"Jinlile Team" <team@jinlile.tech>',
+    to: email,
+    subject: `Your Login Code is ${code}`,
+    text: `Thank you for using Jinlile. Your login code is ${code}`
+  })
+  console.log('message sent')  
+}
 
 module.exports = router;

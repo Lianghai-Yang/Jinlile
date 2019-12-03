@@ -24,7 +24,7 @@ class Code extends React.Component {
     async componentDidMount() {
         try{
             const email = localStorage.getItem('email');
-            const response = await axios.get(`http://localhost:3001/users?email=${email}`);
+            const response = await axios.get(`/users?email=${email}`);
             const userData = response.data;
             this.setState({
                 ...this.state,

@@ -24,7 +24,7 @@ class Groups extends React.Component {
     async getGroups() {
         try{
             const uid = localStorage.getItem('uid');
-            const response = await axios.get(`http://localhost:3001/users/${uid}`);
+            const response = await axios.get(`/users/${uid}`);
             const groups = response.data.groups;
             console.log(groups);
             // return [
