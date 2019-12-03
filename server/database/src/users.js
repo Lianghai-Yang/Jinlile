@@ -11,7 +11,6 @@ const getById = async (id) =>{
   };
 
 const create = async (name,email,groups = [],email_code) => {
-    //console.log("create a user");
     if(!name || typeof(name)!=="string") throw "You must provide a name";
     if(!email || typeof(email)!=="string") throw "You must provide an email";
     if(!email_code || typeof(email_code)!=="string") throw "You must init an email_code";
@@ -69,10 +68,54 @@ const addGroupToUser = async (userName,groupId,groupName) =>{
     return await getByUserName(userName);
 }
 
+const getByUserEmail = async(userEmail) => {
+  if (!userEmail) throw "You must provide a userName to search for";
+  const userCollection = await users();
+  const userGo = await userCollection.findOne({email: userEmail});
+  if (userGo === null) throw "No user with that name";
+  return userGo;
+};
+
+const createCode = async (userEmail) => {
+  if(!userEmail) throw "You must provide a userEmail to search for";
+
+  const userCollection = await users();
+
+  var randomCode = "";
+  for(let i = 0; i<4; i++){
+    var randomDigit = Math.floor(Math.random() * 10);
+    randomCode += randomDigit;
+  }
+
+  //check whether we have this email in our database, if yes, we update its code, or we create a new user
+  const userGo = await userCollection.findOne({email: userEmail});
+  if(userGo!=null){
+    //console.log("DB: user find");
+    await userCollection.updateOne({email: userEmail},{$set: {email_code: randomCode}});
+  }
+  else{
+    //console.log("DB: user NOT find");
+    await create(userEmail,userEmail,[],randomCode);
+  }
+
+  return randomCode;
+};
+
+const getCodeByUserEmail = async(userEmail) =>{
+  if (!userEmail) throw "You must provide a userName to search for";
+  //console.log("we hit getCode in database");
+  const userGo = await getByUserEmail(userEmail);
+  return userGo.email_code;
+}
+
 
 module.exports = {
     create,
     getById,
-    removeById,getByUserName,
-    addGroupToUser
+    removeById,
+    getByUserName,
+    addGroupToUser,
+    createCode,
+    getByUserEmail,
+    getCodeByUserEmail
 }

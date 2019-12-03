@@ -12,12 +12,14 @@ const makeHandlers = require('./socketio/handlers')
 const clientManager = ClientManager()
 const chatroomManager = ChatroomManager()
 
+var cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -59,6 +61,11 @@ io.on('connection', function (client) {
   server.listen(8800, function (err) {
     if (err) throw err
     console.log('listening on port 8800')
-  })
+  });
+
+  app.listen(3001, () => {
+    console.log("We've now got a server!");
+    console.log("Your routes will be running on http://localhost:3001");
+  });
 
 module.exports = app;

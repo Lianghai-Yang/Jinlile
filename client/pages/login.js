@@ -1,8 +1,9 @@
 import React from 'react'
 import Layout from "../components/layout";
 import Form from "react-bootstrap/Form";
-import { Button, Alert, Container } from 'react-bootstrap'
-import { withRouter } from 'next/router'
+import { Button, Alert, Container } from 'react-bootstrap';
+import { withRouter } from 'next/router';
+import axios from "axios";
 
 class Login extends React.Component {
   constructor(props) {
@@ -10,17 +11,20 @@ class Login extends React.Component {
     let imgNum = parseInt(Math.random() * 50)
     this.state = {
       showAlert: false,
-      imgNum: imgNum
+      imgNum: imgNum,
+      email: undefined
     }
+    this.handleEmailChange = this.handleEmailChange.bind(this);
   }
   
   async handleLogin(event) {
     let validation = document.getElementById('login-form').checkValidity()
+    const email = this.state.email;
     if (validation == false) {
       return this.showAlert(true)
     } 
     this.showAlert(false)
-    let result = await this.sendCode()
+    let result = await this.sendCode(email)
     this.props.router.replace('/code')
   }
 
@@ -31,12 +35,24 @@ class Login extends React.Component {
     })
   }
 
-  sendCode() {
+  async sendCode(email) {
+    let params = {email:email};
+    const response = await axios.post(`http://localhost:3001/users/code`,params);
+    const code = response.data;
+    console.log(code);
+    localStorage.setItem('email', email);
+
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve(true)
       }, 1000);
     })
+  }
+
+  async handleEmailChange(event) {
+    let value = event.target.value;
+    //console.log("handleEmail : " + value);
+    this.setState({email:value});
   }
   
   render() {
@@ -50,7 +66,7 @@ class Login extends React.Component {
             </div>
             <div className="w-100 mt-5">
               <Form id="login-form" onSubmit={event => event.preventDefault()}>
-                <Form.Control required size="lg" type="email" placeholder="Enter email" />
+                <Form.Control required size="lg" type="email" placeholder="Enter email" onChange={this.handleEmailChange} />
                 <Button size="lg" className="btn-block mt-3" variant="dark" onClick={this.handleLogin.bind(this)}>Login</Button>
               </Form>
             </div>

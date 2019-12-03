@@ -1,3 +1,3 @@
 module.exports = {
-    google_map_api_key: 'apiKey'
+    google_map_api_key: 'api_key'
 }

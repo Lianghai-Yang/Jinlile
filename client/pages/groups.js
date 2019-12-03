@@ -3,6 +3,7 @@ import ListGroup from 'react-bootstrap/ListGroup'
 import Layout from '../components/layout'
 import { Button, Container } from 'react-bootstrap'
 import { withRouter } from "next/router";
+import axios from "axios";
 
 class Groups extends React.Component {
     constructor(props) {
@@ -21,18 +22,28 @@ class Groups extends React.Component {
     }
 
     async getGroups() {
-        return [
-            { name: 'My Family', gid: 'myFamily' },
-            { name: 'My Friends', gid: 'myFriends' },
-            { name: 'Hiking Team', gid: 'hikingTeam' },
-            { name: 'Colleagues', gid: 'colleagues' },
-        ]
+        try{
+            const uid = localStorage.getItem('uid');
+            const response = await axios.get(`http://localhost:3001/users/${uid}`);
+            const groups = response.data.groups;
+            console.log(groups);
+            // return [
+            //     { name: 'My Family', gid: 'myFamily' },
+            //     { name: 'My Friends', gid: 'myFriends' },
+            //     { name: 'Hiking Team', gid: 'hikingTeam' },
+            //     { name: 'Colleagues', gid: 'colleagues' },
+            // ]
+            return groups;
+        }catch (e) {
+            console.log("error happens");
+            console.log(e);
+          }
     }
 
     handleGroupSelect(group) {
-        localStorage.setItem('group', JSON.stringify(group))
-        let { router } = this.props
-        router.push('/map')
+        localStorage.setItem('group', JSON.stringify(group));
+        let { router } = this.props;
+        router.push('/map');
     }
     
     render() {
@@ -46,10 +57,12 @@ class Groups extends React.Component {
                                 <ListGroup.Item
                                 as="div"
                                 action={true}
-                                key={group.gid}
+                                //key={group.gid}
+                                key = {group.groupId}
                                 onClick={this.handleGroupSelect.bind(this, group)}
                                 >
-                                    {group.name}
+                                    {group.groupName}
+                                    {/* {group.name} */}
                                 </ListGroup.Item>
                             ))}
                         </ListGroup>

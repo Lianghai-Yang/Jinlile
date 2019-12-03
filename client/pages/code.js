@@ -1,9 +1,10 @@
 import React from "react";
-import Layout from '../components/layout'
-import Form from 'react-bootstrap/Form'
-import Link from 'next/link'
-import { Alert, Container } from 'react-bootstrap'
-import { withRouter } from 'next/router'
+import Layout from '../components/layout';
+import Form from 'react-bootstrap/Form';
+import Link from 'next/link';
+import { Alert, Container } from 'react-bootstrap';
+import { withRouter } from 'next/router';
+import axios from "axios";
 
 class Code extends React.Component {
 
@@ -14,9 +15,24 @@ class Code extends React.Component {
             alert: {
                 show: false,
                 content: ''
-            }
+            },
+            userData: undefined
         }
 
+    }
+
+    async componentDidMount() {
+        try{
+            const email = localStorage.getItem('email');
+            const response = await axios.get(`http://localhost:3001/users?email=${email}`);
+            const userData = response.data;
+            this.setState({
+                ...this.state,
+                userData: userData
+            });
+        }catch(e){
+            console.log(e);
+        }
     }
     
     async handleNumberChange(event) {
@@ -64,6 +80,9 @@ class Code extends React.Component {
             return
         }
 
+        //We already find the corresponding user in the database, so we save his uid in localStorage
+        localStorage.setItem('uid',this.state.userData._id);
+
         // validated code, direct to map page
         let { router } = this.props
         router.replace('/groups')
@@ -71,7 +90,16 @@ class Code extends React.Component {
 
     // TODO: send request to validate the code
     async validateCode(code) {
-        return true
+        const userData = this.state.userData;
+        if(userData!==undefined){
+            const correctCode = this.state.userData.email_code;
+            console.log("database code: "+correctCode);
+            console.log("input code: "+code);
+            return code==correctCode;
+        }
+        console.log("userData is undefind, no user with that input email");
+        return false;
+        //return true
     }
     
     render() {
