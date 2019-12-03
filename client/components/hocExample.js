@@ -38,7 +38,7 @@ var globalCount = 0
 
 function globalHandler(data) {
     globalCount ++
-    console.log(`global handler is called ${globalCount} times`)
+    console.log(data)
     return globalCount
 }
 
