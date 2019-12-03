@@ -1,8 +1,23 @@
 const io = require('socket.io-client')
+var socket = null
+var obj = {
+  register,
+  join,
+  leave,
+  message,
+  getChatrooms,
+  getAvailableUsers,
+  registerHandler,
+  unregisterHandler
+}
 
 export default function () {
-  const socket = io.connect('http://localhost:8800')
+  if (socket != null) {
+    return obj
+  }
   
+  socket = io.connect('http://localhost:8800')
+
   console.log('socket io connect...........')
   
   function registerHandler(onMessageReceived) {
@@ -42,7 +57,7 @@ export default function () {
     socket.emit('availableUsers', null, cb)
   }
 
-  return {
+  obj = {
     register,
     join,
     leave,
@@ -52,4 +67,6 @@ export default function () {
     registerHandler,
     unregisterHandler
   }
+
+  return obj
 }
