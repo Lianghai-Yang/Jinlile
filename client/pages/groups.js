@@ -4,6 +4,7 @@ import Layout from '../components/layout'
 import { Button, Container } from 'react-bootstrap'
 import { withRouter } from "next/router";
 import axios from "axios";
+import withAuthentication from '../components/withAuthentication'
 
 class Groups extends React.Component {
     constructor(props) {
@@ -24,11 +25,9 @@ class Groups extends React.Component {
     async getGroups() {
         try{
             const user = JSON.parse(localStorage.getItem('user'));
-            console.log(user)
             const uid = user._id;
             const { data } = await axios.get(`/users/${uid}`);
             const groups = data.groups ? data.groups : [];
-            console.log(groups);
             // return [
             //     { name: 'My Family', gid: 'myFamily' },
             //     { name: 'My Friends', gid: 'myFriends' },
@@ -96,4 +95,4 @@ class Groups extends React.Component {
     }
 }
 
-export default withRouter(Groups)
+export default withAuthentication(withRouter(Groups))

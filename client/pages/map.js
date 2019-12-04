@@ -12,6 +12,7 @@ import Toast from 'react-bootstrap/Toast'
 import { withRouter } from 'next/router'
 import Icon from '../components/icon'
 import config from '../jinlile.client.config'
+import withAuthentication from '../components/withAuthentication'
 
 class Map extends React.Component {
     constructor(props) {
@@ -260,4 +261,4 @@ class Map extends React.Component {
     }
 }
 
-export default withRouter(Map)
+export default withAuthentication(withRouter(Map))
