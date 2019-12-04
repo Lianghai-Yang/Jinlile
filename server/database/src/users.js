@@ -2,10 +2,10 @@ const mongoCollections = require("./mongoCollections");
 const users = mongoCollections.users;
 const uuid = require("node-uuid");
 
-const getById = async (id) =>{
+const getById = async (id, projection={}) =>{
     if (!id) throw "You must provide an id to search for";
     const userCollection = await users();
-    const usergo = await userCollection.findOne({ _id: id });
+    const usergo = await userCollection.findOne({ _id: id }, { projection });
     if (usergo === null) throw "No student with that id";
     return usergo;
   };
@@ -35,23 +35,23 @@ const create = async (name,email,groups = [],email_code) => {
 }
 
 const removeById = async (id) =>{
-    if (!id) throw "You must provide an id to search for";
-    const userCollection = await users();
-    const user = await getById(id);
-    const deletionInfo = await userCollection.removeOne({ _id: id });
+  if (!id) throw "You must provide an id to search for";
+  const userCollection = await users();
+  const user = await getById(id);
+  const deletionInfo = await userCollection.removeOne({ _id: id });
 
-    if (deletionInfo.deletedCount === 0) {
-      throw `Could not delete student with id of ${id}`;
-    }
-    return user;
-  };
+  if (deletionInfo.deletedCount === 0) {
+    throw `Could not delete student with id of ${id}`;
+  }
+  return user;
+};
 
-  const getByUserName = async(userName) => {
-    if (!userName) throw "You must provide a userName to search for";
-    const userCollection = await users();
-    const userGo = await userCollection.findOne({name: userName});
-    if (userGo === null) throw "No user with that name";
-    return userGo;
+const getByUserName = async(userName, projection={}) => {
+  if (!userName) throw "You must provide a userName to search for";
+  const userCollection = await users();
+  const userGo = await userCollection.findOne({name: userName}, { projection: projection });
+  if (userGo === null) throw "No user with that name";
+  return userGo;
 };
 
 const addGroupToUser = async (userName,groupId,groupName) =>{
@@ -68,15 +68,15 @@ const addGroupToUser = async (userName,groupId,groupName) =>{
     return await getByUserName(userName);
 }
 
-const getByUserEmail = async(userEmail) => {
+const getByUserEmail = async(userEmail, projection={}) => {
   if (!userEmail) throw "You must provide a userName to search for";
   const userCollection = await users();
-  const userGo = await userCollection.findOne({email: userEmail});
+  const userGo = await userCollection.findOne({email: userEmail}, { projection: projection });
   if (userGo === null) throw "No user with that name";
   return userGo;
 };
 
-const createCode = async (userEmail) => {
+const createCode = async (userEmail, projection={}) => {
   if(!userEmail) throw "You must provide a userEmail to search for";
 
   const userCollection = await users();
@@ -88,7 +88,7 @@ const createCode = async (userEmail) => {
   }
 
   //check whether we have this email in our database, if yes, we update its code, or we create a new user
-  const userGo = await userCollection.findOne({email: userEmail});
+  const userGo = await userCollection.findOne({email: userEmail}, { projection: projection });
   if(userGo!=null){
     //console.log("DB: user find");
     await userCollection.updateOne({email: userEmail},{$set: {email_code: randomCode}});

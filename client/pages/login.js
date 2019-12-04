@@ -36,17 +36,10 @@ class Login extends React.Component {
   }
 
   async sendCode(email) {
-    let params = {email:email};
-    const response = await axios.post(`/users/code`,params);
-    const code = response.data;
-    console.log(code);
-    localStorage.setItem('email', email);
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(true)
-      }, 1000);
-    })
+    let params = { email:email };
+    const { data } = await axios.post(`/users/code`, params);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    return true
   }
 
   async handleEmailChange(event) {

@@ -23,9 +23,11 @@ class Groups extends React.Component {
 
     async getGroups() {
         try{
-            const uid = localStorage.getItem('uid');
-            const response = await axios.get(`/users/${uid}`);
-            const groups = response.data.groups;
+            const user = JSON.parse(localStorage.getItem('user'));
+            console.log(user)
+            const uid = user._id;
+            const { data } = await axios.get(`/users/${uid}`);
+            const groups = data.groups ? data.groups : [];
             console.log(groups);
             // return [
             //     { name: 'My Family', gid: 'myFamily' },
@@ -35,9 +37,17 @@ class Groups extends React.Component {
             // ]
             return groups;
         }catch (e) {
-            console.log("error happens");
-            console.log(e);
-          }
+            switch(e.response.status) {
+                case 404:
+                    let { router } = this.props
+                    router.replace('/')
+                    break
+                default:
+                    console.log("error happens");
+                    console.log(JSON.stringify(e));
+            }
+        }
+        return []
     }
 
     handleGroupSelect(group) {
@@ -45,28 +55,35 @@ class Groups extends React.Component {
         let { router } = this.props;
         router.push('/map');
     }
+
+    selectGroups() {
+        return (
+            <>
+                <p className="mt-4 text-muted">You have multiple groups. Please select one to continue... </p>
+                <div>
+                    <ListGroup className="mt-4" variant="flush">
+                        {this.state.groups.map(group => (
+                            <ListGroup.Item
+                            as="div"
+                            action={true}
+                            key={group.groupName}
+                            onClick={this.handleGroupSelect.bind(this, group)}
+                            >
+                                {group.groupName}
+                                {/* {group.name} */}
+                            </ListGroup.Item>
+                        ))}
+                    </ListGroup>
+                </div>
+            </>
+        )
+    }
     
     render() {
         return (
             <Layout>
                 <Container>
-                    <p className="mt-4 text-muted">You have multiple groups. Please select one to continue... </p>
-                    <div>
-                        <ListGroup className="mt-4" variant="flush">
-                            {this.state.groups.map(group => (
-                                <ListGroup.Item
-                                as="div"
-                                action={true}
-                                //key={group.gid}
-                                key = {group.groupId}
-                                onClick={this.handleGroupSelect.bind(this, group)}
-                                >
-                                    {group.groupName}
-                                    {/* {group.name} */}
-                                </ListGroup.Item>
-                            ))}
-                        </ListGroup>
-                    </div>
+                    {this.state.groups.length > 0 ? this.selectGroups() : ''}
                     <div className="mt-5">
                         <p className="text-muted">Want to have a new group?</p>
                         <Button variant="dark" size="lg" className="btn-block">Create</Button>

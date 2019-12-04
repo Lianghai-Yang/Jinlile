@@ -16,23 +16,23 @@ class Code extends React.Component {
                 show: false,
                 content: ''
             },
-            userData: undefined
+            userData: {}
         }
 
     }
 
     async componentDidMount() {
-        try{
-            const email = localStorage.getItem('email');
-            const response = await axios.get(`/users?email=${email}`);
-            const userData = response.data;
-            this.setState({
-                ...this.state,
-                userData: userData
-            });
-        }catch(e){
-            console.log(e);
-        }
+        // let email = localStorage.getItem('email')
+        // if (email == null) {
+        //     return this.setState({ alert: { show: true, content: 'Invalid User' } })
+        // }
+        // let userData = JSON.parse(user)
+        // this.setState({
+        //     userData: {
+        //         ...this.state.userData,
+        //         ...userData
+        //     }
+        // })
     }
     
     async handleNumberChange(event) {
@@ -80,9 +80,6 @@ class Code extends React.Component {
             return
         }
 
-        //We already find the corresponding user in the database, so we save his uid in localStorage
-        localStorage.setItem('uid',this.state.userData._id);
-
         // validated code, direct to map page
         let { router } = this.props
         router.replace('/groups')
@@ -90,16 +87,8 @@ class Code extends React.Component {
 
     // TODO: send request to validate the code
     async validateCode(code) {
-        const userData = this.state.userData;
-        if(userData!==undefined){
-            const correctCode = this.state.userData.email_code;
-            console.log("database code: "+correctCode);
-            console.log("input code: "+code);
-            return code==correctCode;
-        }
-        console.log("userData is undefind, no user with that input email");
-        return false;
-        //return true
+        let { data } = await axios.get(`/users/code/${code}/validated`)
+        return data.msg && data.msg === true
     }
     
     render() {

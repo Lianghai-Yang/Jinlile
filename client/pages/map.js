@@ -11,8 +11,7 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Toast from 'react-bootstrap/Toast'
 import { withRouter } from 'next/router'
 import Icon from '../components/icon'
-
-const config = require('../jinlile.client.config')
+import config from '../jinlile.client.config'
 
 class Map extends React.Component {
     constructor(props) {
