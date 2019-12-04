@@ -1,6 +1,34 @@
 import React, { Component } from 'react'
 import socketFunc from './socketFunc'
+// import axios from "axios";
 
+var socketState = {
+  client: null,
+  user: null,
+  group: null,
+  roomEntered: false,
+  chatHistory: []
+}
+
+function socketHandler(k, v) {
+  if (k===null){
+    return socketState
+  }
+  else{
+    socketState[k] = v
+    return socketState
+  }
+}
+
+function addregisterHandler(entry) {
+    socketState.client.registerHandler(entry)
+    return socketState
+}
+
+function addHistory(entry) {
+  socketState.chatHistory = socketState.chatHistory.concat(entry)
+  return socketState
+}
 
 const socketWrapper = (ComponentToWrap) => {
   return class chatComponent extends Component {
@@ -8,70 +36,79 @@ const socketWrapper = (ComponentToWrap) => {
         super(props)
         
         this.state = {
-            client: socketFunc(),
-            user: '....',
-            isRegisterInProcess: false,
-            chatroom: 'Colleagues',
+            socketState: socketHandler(null, null),
             chatHistory: []
         }
-        this.nextgroup = ''
-        this.nextname = ''    
         this.onEnterChatroom = this.onEnterChatroom.bind(this)
         this.onLeaveChatroom = this.onLeaveChatroom.bind(this)
         this.register = this.register.bind(this)
-        //this.getChatrooms = this.getChatrooms.bind(this)
-        //this.getChatrooms()
-
+        this.onMessageReceived = this.onMessageReceived.bind(this)
+        this.getUserGroup = this.getUserGroup.bind(this)
     }
-
+    
+    componentDidUpdate(_, prevState) {
+      if (this.state.chatHistory !== prevState.chatHistory){
+        socketState = socketHandler('chatHistory', this.state.chatHistory)
+        this.setState({socketState, socketState})
+      }
+        
+    }
     componentDidMount(){
-      this.nextname = localStorage.getItem('nextname')
-      if (this.nextname == 'Yang'){
-          localStorage.setItem('nextname', 'Wang')
-      }
-      else{
-          localStorage.setItem('nextname', 'Yang')
-      }
-      this.nextname = localStorage.getItem('nextname')
-      
-      // this.nextgroup = localStorage.getItem('group')
-      // if (this.nextgroup == 'Hiking Team'){
-      //     localStorage.setItem('group', 'Colleagues')
-      // }
-      // else{
-      //     localStorage.setItem('group', 'Hiking Team')
-      // }
-      // this.nextgroup = localStorage.getItem('group')
-      this.nextgroup = 'Colleagues'
-      
-      console.log(this.nextname)
-      console.log(this.nextgroup)
+      if (this.state.socketState.roomEntered === false){
+        let client = socketFunc()
+        let roomEntered = true
+        let user = 'Wang'
+        let group = 'Colleagues'
+        this.register(client, user)
+        socketHandler('user', user)
+        socketHandler('group', group)
+        socketState = socketHandler('client', client)
+        this.setState({
+          socketState, socketState
+        })
 
-      this.register(this.nextname)
-      this.onEnterChatroom(
-          this.nextgroup,
+        this.onEnterChatroom(
+          group,
           () => null,
-          chatHistory => {
+          chatHistoryServer => {
             console.log('on enter chat room and get history:')
-            console.log(chatHistory)
-            let filter_chatHistory = []
-            for (let i=0; i<chatHistory.length; i++){
-                if ('message' in chatHistory[i]){
-                    let message = chatHistory[i].message
+            let filtedChatHistory = []
+            for (let i=0; i<chatHistoryServer.length; i++){
+                if ('message' in chatHistoryServer[i]){
+                    let message = chatHistoryServer[i].message
                     message.date = new Date(message.date)
-                    filter_chatHistory.push(message)
+                    filtedChatHistory.push(message)
                 }
             }
-            this.setState({chatHistory: filter_chatHistory})
+            this.setState({chatHistory: filtedChatHistory}) 
           }
         )
+        socketHandler('roomEntered', roomEntered)
+        socketState = addregisterHandler(this.onMessageReceived)
+        this.setState({
+          socketState, socketState
+        })
+        console.log(socketState)
+      }
+      
+    }
+
+    componentWillUnmount() {
+      this.state.socketState.client.unregisterHandler()
+    }
+
+    getUserGroup(){
+      const user = JSON.parse(localStorage.getItem('user'));
+      const group = JSON.parse(localStorage.getItem('group'));
+      console.log(user)
+      return {user: user, group: group}
     }
 
     onEnterChatroom(chatroomName, onNoUserSelected, onEnterSuccess) {
-      if (!this.state.user)
+      if (!this.state.socketState.user)
         return onNoUserSelected()
       console.log('enter chatroom success ......')
-      return this.state.client.join(chatroomName, (err, chatHistory) => {
+      return this.state.socketState.client.join(chatroomName, (err, chatHistory) => {
         if (err)
           return console.error(err)
         return onEnterSuccess(chatHistory)
@@ -79,35 +116,35 @@ const socketWrapper = (ComponentToWrap) => {
     }
     
     onLeaveChatroom(chatroomName, onLeaveSuccess) {
-      this.state.client.leave(chatroomName, (err) => {
+      this.state.socketState.client.leave(chatroomName, (err) => {
         if (err)
           return console.error(err)
         return onLeaveSuccess()
       })
     }
-  
-    getChatrooms() {
-      this.state.client.getChatrooms((err, chatrooms) => {
-        this.setState({ chatrooms })
+
+    register(client, name) {
+      client.register(name, (err, user) => {
+        return null
       })
     }
-    
-    register(name) {
-      //const onRegisterResponse = user => this.setState({ isRegisterInProcess: false, user })
-      //this.setState({ isRegisterInProcess: true })
-      this.state.client.register(name, (err, user) => {
-        return null
-        //if (err) return onRegisterResponse(null)
-        //return onRegisterResponse(user)
-      })
+
+    onMessageReceived(entry) {
+      console.log('onMessageReceived:', entry)
+      if ('message' in entry){
+        entry = entry.message
+        entry.date = new Date(entry.date)
+        
+        this.setState(
+          {socketState: addHistory(entry)}
+        )
+        console.log(this.state.socketState)
+      }
     }
 
     render() {
       return (
         <ComponentToWrap
-        chatroom={this.nextgroup}
-        chatHistory={this.state.chatHistory}
-        user={this.nextname}
         onLeave={
           () => this.onLeaveChatroom(
             chatroom.name,
@@ -115,14 +152,13 @@ const socketWrapper = (ComponentToWrap) => {
           )
         }
         onSendMessage={
-          (message, cb) => this.state.client.message(
-            this.nextgroup,
+          (message, cb) => this.state.socketState.client.message(
+            this.state.socketState.group,
             message,
             cb
           )
         }
-        registerHandler={this.state.client.registerHandler}
-        unregisterHandler={this.state.client.unregisterHandler}
+        chatHistory={this.state.socketState.chatHistory}
         {...this.props}
         />
       )

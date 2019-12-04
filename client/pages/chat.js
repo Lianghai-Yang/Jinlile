@@ -1,5 +1,6 @@
 import 'react-chat-elements/dist/main.css'
 import React from 'react'
+import Link from 'next/Link'
 import Layout from '../components/layout'
 import { FaAngleLeft, FaBars } from "react-icons/fa";
 import { MessageBox, Input, Button } from 'react-chat-elements'
@@ -22,30 +23,15 @@ class Chat extends React.Component {
                 //     text: 'Hi, we can start sharing our location!',
                 //     date: new Date(),
                 // },
-                // {
-                //     title: 'Amy',
-                //     position: 'left',
-                //     type: 'text',
-                //     text: 'Yes! I cannot wait anymore! Yes! I cannot wait anymore! Yes! I cannot wait anymore!',
-                //     date: new Date(),
-                // },
-                // {
-                //     title: 'Eric',
-                //     position: 'left',
-                //     type: 'text',
-                //     text: 'Hey, are you Ok?',
-                //     date: new Date(),
-                // }
             ]
         }
 
-        this.onMessageReceived = this.onMessageReceived.bind(this)
-        this.updateChatHistory = this.updateChatHistory.bind(this)
     }
 
     sideIconLeft() {
         return (
-            <FaAngleLeft size="1.5rem" color="#007bff" />
+           // <FaAngleLeft color="#007bff" size="1.5rem" onClick={() => window.location.href='/map'} className="flex-grow-0" />
+           <Link color="#007bff" size="1.5rem" href='/map' className="flex-grow-0" />
         )
     }
 
@@ -57,7 +43,8 @@ class Chat extends React.Component {
 
     componentDidUpdate(prevProps) {
         if (this.props.chatHistory !== prevProps.chatHistory) {
-            this.setState({ messages: this.props.chatHistory}
+            let chatHistory = this.props.chatHistory
+            this.setState({ messages: chatHistory}
                     , () => {
                         this.refs.chatBody.scrollTo({
                             top: this.refs.chatBody.scrollHeight,
@@ -67,38 +54,6 @@ class Chat extends React.Component {
                     }
                 )
         }
-    }
-
-    componentDidMount() {
-        this.props.registerHandler(this.onMessageReceived)
-        // this.setState({
-        //     ...this.state,
-        //     groupName: JSON.parse(localStorage.getItem('group')).name
-        // })
-    }
-
-    componentWillUnmount() {
-        this.props.unregisterHandler()
-    }
-
-    onMessageReceived(entry) {
-        if ('message' in entry){
-            console.log('onMessageReceived:', entry)
-            this.updateChatHistory(entry.message)
-        }
-    }
-
-    updateChatHistory(entry) {
-        console.log('chat history updated')
-        entry.date = new Date(entry.date)
-        this.setState({ messages: this.state.messages.concat(entry) }
-                        , () => {
-                                this.refs.chatBody.scrollTo({
-                                    top: this.refs.chatBody.scrollHeight,
-                                    left: 0,
-                                    behavior: 'smooth'
-                                })
-                        })
     }
 
     messageList() {
@@ -126,17 +81,6 @@ class Chat extends React.Component {
             console.log(msg)
             return null
           })
-        
-        // this.setState({
-        //     ...this.state,
-        //     messages: [...this.state.messages, msg]
-        // }, () => {
-        //     this.refs.chatBody.scrollTo({
-        //         top: this.refs.chatBody.scrollHeight,
-        //         left: 0,
-        //         behavior: 'smooth'
-        //     })
-        // })
     }
 
     sendMessage() {
