@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/Link'
+import Link from 'next/link'
 import Layout from '../components/layout'
 import GoogleMapReact from 'google-map-react'
 import { Alert, Button } from 'react-bootstrap'
