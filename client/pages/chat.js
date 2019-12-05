@@ -1,6 +1,6 @@
 import 'react-chat-elements/dist/main.css'
 import React from 'react'
-import Link from 'next/Link'
+import Link from 'next/link'
 import Layout from '../components/layout'
 import { FaAngleLeft, FaBars } from "react-icons/fa";
 import { MessageBox, Input, Button } from 'react-chat-elements'
