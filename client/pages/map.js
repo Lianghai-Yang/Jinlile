@@ -88,7 +88,6 @@ class Map extends React.Component {
     }
 
     async getFriendsPosition() {
-        console.log('testing')
         let groupId = this.state.group.groupId
         let { data } = await axios.get(`/users/group/${groupId}/positions`)
         return data
