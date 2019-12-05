@@ -7,7 +7,7 @@ import Icon from '../components/icon'
 import { FaPaperPlane } from 'react-icons/fa'
 import { Container } from 'react-bootstrap'
 import withAuthentication from '../components/withAuthentication'
-import socketHOC from '../components/socketio/socketHOC'
+import socketWrapper from '../components/socketio/socketHOC'
 
 class Chat extends React.Component {
     constructor(props) {
@@ -203,4 +203,4 @@ class Chat extends React.Component {
     }
 }
 
-export default withAuthentication(socketHOC(Chat))
+export default withAuthentication(socketWrapper(Chat))

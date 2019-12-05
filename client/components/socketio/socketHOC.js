@@ -123,7 +123,7 @@ const socketWrapper = (ComponentToWrap) => {
         }
         registerHandler={this.state.client.registerHandler}
         unregisterHandler={this.state.client.unregisterHandler}
-        {...props}
+        {...this.props}
         />
       )
     }

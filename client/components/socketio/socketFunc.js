@@ -1,22 +1,25 @@
+import config from '../../jinlile.client.config'
+
 const io = require('socket.io-client')
 var socket = null
-var obj = {
-  register,
-  join,
-  leave,
-  message,
-  getChatrooms,
-  getAvailableUsers,
-  registerHandler,
-  unregisterHandler
-}
+var obj = null
+//  = {
+//   register,
+//   join,
+//   leave,
+//   message,
+//   getChatrooms,
+//   getAvailableUsers,
+//   registerHandler,
+//   unregisterHandler
+// }
 
 export default function () {
   if (socket != null) {
     return obj
   }
   
-  socket = io.connect('http://localhost:8800')
+  socket = io.connect(config.socketio_url)
 
   console.log('socket io connect...........')
   
