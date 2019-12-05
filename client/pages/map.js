@@ -13,10 +13,21 @@ import { withRouter } from 'next/router'
 import Icon from '../components/icon'
 import config from '../jinlile.client.config'
 import withAuthentication from '../components/withAuthentication'
+import axios from 'axios'
 
 class Map extends React.Component {
     constructor(props) {
         super(props)
+        
+        let group = null
+
+        try {
+            group = JSON.parse(localStorage.getItem('group'))
+        }
+        catch(e) {
+            console.log(e)
+        }
+
         this.watching = true
         this.state = {
             center: { lat: 40.7448501, lng: -74.027187 },
@@ -31,6 +42,7 @@ class Map extends React.Component {
                 time: '',
                 show: false,
             },
+            group
         }
     }
 
@@ -76,11 +88,14 @@ class Map extends React.Component {
     }
 
     async getFriendsPosition() {
-        return [
-            { name: 'Alice', lat: 40.7438877, lng: -74.0339645 },
-            { name: 'Eric', lat: 40.747139, lng: -74.0306601 },
-            { name: 'Amy', lat: 40.7335799, lng: -74.0345654 },
-        ]
+        let groupId = this.state.group.groupId
+        let { data } = await axios.get(`/users/group/${groupId}/positions`)
+        return data
+        // return [
+        //     { name: 'Alice', lat: 40.7438877, lng: -74.0339645 },
+        //     { name: 'Eric', lat: 40.747139, lng: -74.0306601 },
+        //     { name: 'Amy', lat: 40.7335799, lng: -74.0345654 },
+        // ]
     }
 
     async watchMarkers() {
@@ -90,25 +105,27 @@ class Map extends React.Component {
     }
     
     async getMarkers(zoom=14) {
-        let myself = (
-            <Marker
-                name="You"
-                iconIndex={this.simpleHash("You")}
-                lat={this.state.center.lat}
-                lng={this.state.center.lng}
-                key="You"
-                zoom={14}
-            ></Marker>
-        )
-        let markers = [myself]
+        // let myself = (
+        //     <Marker
+        //         name="You"
+        //         iconIndex={this.simpleHash("You")}
+        //         lat={this.state.center.lat}
+        //         lng={this.state.center.lng}
+        //         key="You"
+        //         zoom={14}
+        //     ></Marker>
+        // )
+        // let markers = [myself]
+        let markers = []
         for (let f of await this.getFriendsPosition()) {
+            if (f.lat == null || f.lng == null) continue
             markers.push(
                 <Marker
-                    name={f.name}
-                    iconIndex={this.simpleHash(f.name)}
+                    name={f.userName}
+                    iconIndex={this.simpleHash(f.userName)}
                     lat={f.lat}
                     lng={f.lng}
-                    key={f.name}
+                    key={f.userName}
                     zoom={14}
                 ></Marker>
             )

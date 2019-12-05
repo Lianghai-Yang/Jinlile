@@ -23,7 +23,6 @@ router.get("/code/:code/validated", async (req, res) => {
     }
     const { email_code: code } = await userData.getById(uid, { email_code: 1 });
     if (code == userCode) {
-      console.log(req.session)
       const user = await userData.getById(uid, { email_code: 0 })
       user.loggedIn = true
       req.session.user = user
@@ -39,7 +38,6 @@ router.get("/code/:code/validated", async (req, res) => {
 });
 
 router.post("/code", async (req,res) => {
-  console.log("we hit router post code")
   const emailInfo = req.body;
   let { email } = emailInfo
   if (!email) {
@@ -53,8 +51,6 @@ router.post("/code", async (req,res) => {
   try{
     // const email = emailInfo.email;
     const code = await userData.createCode(email);
-    // res.json(code);
-    console.log(code)
     mailCode({ code, email })
     const userInfo = await userData.getByUserEmail(email, { _id: 1 })
     req.session.user = {
@@ -111,8 +107,26 @@ router.get('/group/:groupId/positions', async (req, res, next) => {
   }
   let userIds = group.users.map(user => user.userId)
   let positions = await redis.geoposAsync('jinlile:positions', ...userIds)
-  console.log(positions)
-  res.send(positions)
+
+  let result = group.users.map((user, i) => (
+    {
+      ...user,
+      lng: positions[i] ? positions[i][0] : null,
+      lat: positions[i] ? positions[i][1] : null,
+    }
+  ))
+
+  res.send(result)
+})
+
+router.put('/position', async (req, res, next) => {
+  let { lng, lat } = req.body
+  let { user } = req.session
+  if (!lng || !lat) {
+    return res.status(400).send({ msg: 'missing longitude and latitude'})
+  }
+  redis.geoaddAsync('jinlile:positions', lng, lat, user._id)
+  res.send({ msg: 'ok' })
 })
 
 async function mailCode({ email, code }) {

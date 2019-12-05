@@ -1,4 +1,5 @@
 import event from './index'
+import axios from 'axios'
 
 const interval = 3000
 
@@ -26,6 +27,7 @@ async function emitPositionEvent() {
     try {
         let position = await getCurrentPosition()
         event.emit('position', position)
+        axios.put('/users/position', position)
         return position
     }
     catch(e) {

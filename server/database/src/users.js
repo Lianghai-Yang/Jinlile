@@ -95,7 +95,7 @@ const createCode = async (userEmail, projection={}) => {
   }
   else{
     //console.log("DB: user NOT find");
-    await create(userEmail,userEmail,[],randomCode);
+    await create(userEmail.split('@')[0],userEmail,[],randomCode);
   }
 
   return randomCode;
