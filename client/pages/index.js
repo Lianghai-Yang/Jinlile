@@ -13,7 +13,7 @@ class Index extends React.Component {
             router.replace('/login')
         }
         else {
-            router.replace('/map')
+            router.replace('/groups')
         }
     }
 
