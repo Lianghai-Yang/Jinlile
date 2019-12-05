@@ -39,7 +39,7 @@ io.on('connection', function(client) {
 
 server.listen(config.SOCKETIO_PORT, function(err) {
     if (err) throw err
-    console.log('SocketIO listening on port:', config.SOCKETIO_PORT)
+    console.log('SocketIO listening on port', config.SOCKETIO_PORT)
 })
 
 module.exports = server

@@ -3,16 +3,6 @@ import config from '../../jinlile.client.config'
 const io = require('socket.io-client')
 var socket = null
 var obj = null
-//  = {
-//   register,
-//   join,
-//   leave,
-//   message,
-//   getChatrooms,
-//   getAvailableUsers,
-//   registerHandler,
-//   unregisterHandler
-// }
 
 export default function () {
   if (socket != null) {

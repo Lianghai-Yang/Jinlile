@@ -1,5 +1,4 @@
 const Chatroom = require('./chatroom')
-const chatroomTemplates = require('./config/chatrooms')
 
 const data = require("../database/src");
 // const users = data.users;
