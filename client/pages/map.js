@@ -6,7 +6,7 @@ import { Alert, Button } from 'react-bootstrap'
 import events, { position } from '../events'
 import Marker from '../components/marker'
 import Spinner from 'react-bootstrap/Spinner'
-import { FaBars, FaComments, FaPaperPlane } from 'react-icons/fa'
+import { FaBars, FaComments, FaPaperPlane, FaBell } from 'react-icons/fa'
 import Form from "react-bootstrap/Form";
 import InputGroup from 'react-bootstrap/InputGroup'
 import Toast from 'react-bootstrap/Toast'
@@ -229,6 +229,10 @@ class Map extends React.Component {
             }
         })
     }
+
+    needHelp() {
+        alert('Come to me! I need HELP!')
+    }
     
     render() {
         return (
@@ -237,6 +241,9 @@ class Map extends React.Component {
                     <Spinner animation="border" role="status">
                         <span className="sr-only">Loading...</span>
                     </Spinner>
+                </div>
+                <div onClick={() => this.needHelp()} className="position-fixed text-danger" style={{ right: '13px', top: '70px', zIndex: 1, fontSize: '2rem' }}>
+                    <FaBell />
                 </div>
                 <small style={{ zIndex: 1 }} className="text-muted">Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></small>
                 <Alert
