@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/Link'
 import Layout from '../components/layout'
 import GoogleMapReact from 'google-map-react'
 import { Alert, Button } from 'react-bootstrap'
@@ -13,6 +14,8 @@ import { withRouter } from 'next/router'
 import Icon from '../components/icon'
 import config from '../jinlile.client.config'
 import withAuthentication from '../components/withAuthentication'
+import socketWrapper from '../components/socketio/socketHOC'
+
 
 class Map extends React.Component {
     constructor(props) {
@@ -142,9 +145,10 @@ class Map extends React.Component {
     }
 
     sideIconleft() {
-        let { router } = this.props
         return (
-            <FaComments color="#007bff" size="1.5rem" onClick={() => window.location.href='/chat'} className="flex-grow-0" />
+            <Link href="/chat">
+                <a><FaComments color="#007bff" size="1.5rem" className="flex-grow-0" /></a>
+             </Link>
         )
     }
 
@@ -261,4 +265,4 @@ class Map extends React.Component {
     }
 }
 
-export default withAuthentication(withRouter(Map))
+export default withAuthentication(socketWrapper(withRouter(Map)))

@@ -59,7 +59,8 @@ class Chat extends React.Component {
 
     messageList() {
         let list = []
-        let { messages } = this.state
+        //let { messages } = this.state
+        let messages = this.props.chatHistory
         for (let i = 0; i < messages.length; i ++) {
             let msg = messages[i]
             list.push(

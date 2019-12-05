@@ -10,6 +10,10 @@ var socketState = {
   chatHistory: []
 }
 
+function retSocketState(k){
+  return socketState[k]
+}
+
 function socketHandler(k, v) {
   if (k===null){
     return socketState
@@ -45,7 +49,7 @@ const socketWrapper = (ComponentToWrap) => {
         this.onMessageReceived = this.onMessageReceived.bind(this)
         this.getUserGroup = this.getUserGroup.bind(this)
     }
-    
+
     componentDidUpdate(_, prevState) {
       if (this.state.chatHistory !== prevState.chatHistory){
         socketState = socketHandler('chatHistory', this.state.chatHistory)
@@ -158,7 +162,7 @@ const socketWrapper = (ComponentToWrap) => {
             cb
           )
         }
-        chatHistory={this.state.socketState.chatHistory}
+        chatHistory={retSocketState('chatHistory')}
         {...this.props}
         />
       )
