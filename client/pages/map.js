@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/Link'
 import Layout from '../components/layout'
 import GoogleMapReact from 'google-map-react'
 import { Alert, Button } from 'react-bootstrap'
@@ -14,6 +15,8 @@ import Icon from '../components/icon'
 import config from '../jinlile.client.config'
 import withAuthentication from '../components/withAuthentication'
 import axios from 'axios'
+import socketWrapper from '../components/socketio/socketHOC'
+
 
 class Map extends React.Component {
     constructor(props) {
@@ -160,16 +163,39 @@ class Map extends React.Component {
     }
 
     sideIconleft() {
-        let { router } = this.props
         return (
-            <FaComments color="#007bff" size="1.5rem" onClick={() => window.location.href='/chat'} className="flex-grow-0" />
+            <Link href="/chat">
+                <a><FaComments color="#007bff" size="1.5rem" className="flex-grow-0" /></a>
+             </Link>
         )
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.chatHistory !== prevProps.chatHistory) {
+            let chatHistory = this.props.chatHistory
+            let newmessage = chatHistory[chatHistory.length-1]
+            let msg = newmessage.text
+            let from = newmessage.title
+            this.showToast({ msg, from: from, time: 'Now' })
+        }
     }
 
     sendMessage() {
         let input = document.getElementById('message-input')
-        let msg = input.value
-        this.showToast({ msg, from: 'You', time: 'Now' })
+        let msg = {
+            title: this.props.user,
+            position: 'right',
+            type: 'text',
+            text: input.value,
+            date: new Date()
+        }
+        this.props.onSendMessage(msg, (err) => {
+            console.log('in chat add Message')
+            console.log(msg)
+            return null
+          })
+        
+        // this.showToast({ msg, from: 'You', time: 'Now' })
         input.value = ""
     }
 
@@ -279,4 +305,4 @@ class Map extends React.Component {
     }
 }
 
-export default withAuthentication(withRouter(Map))
+export default withAuthentication(socketWrapper(withRouter(Map)))

@@ -1,5 +1,6 @@
 import 'react-chat-elements/dist/main.css'
 import React from 'react'
+import Link from 'next/Link'
 import Layout from '../components/layout'
 import { FaAngleLeft, FaBars } from "react-icons/fa";
 import { MessageBox, Input, Button } from 'react-chat-elements'
@@ -22,30 +23,16 @@ class Chat extends React.Component {
                 //     text: 'Hi, we can start sharing our location!',
                 //     date: new Date(),
                 // },
-                // {
-                //     title: 'Amy',
-                //     position: 'left',
-                //     type: 'text',
-                //     text: 'Yes! I cannot wait anymore! Yes! I cannot wait anymore! Yes! I cannot wait anymore!',
-                //     date: new Date(),
-                // },
-                // {
-                //     title: 'Eric',
-                //     position: 'left',
-                //     type: 'text',
-                //     text: 'Hey, are you Ok?',
-                //     date: new Date(),
-                // }
             ]
         }
 
-        this.onMessageReceived = this.onMessageReceived.bind(this)
-        this.updateChatHistory = this.updateChatHistory.bind(this)
     }
 
     sideIconLeft() {
         return (
-            <FaAngleLeft size="1.5rem" color="#007bff" />
+           <Link href="/map">
+               <a><FaAngleLeft color="#007bff" size="1.5rem" className="flex-grow-0" /></a>
+            </Link>
         )
     }
 
@@ -56,56 +43,26 @@ class Chat extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
+        console.log('chat components did update')
         if (this.props.chatHistory !== prevProps.chatHistory) {
-            this.setState({ messages: this.props.chatHistory}
-                    , () => {
-                        this.refs.chatBody.scrollTo({
-                            top: this.refs.chatBody.scrollHeight,
-                            left: 0,
-                            behavior: 'smooth'
-                        })
-                    }
-                )
+            let chatHistory = this.props.chatHistory
+            this.setState({messages: chatHistory},
+                ()=>{
+                    this.scrollDown()
+                })
         }
-    }
-
-    componentDidMount() {
-        this.props.registerHandler(this.onMessageReceived)
-        // this.setState({
-        //     ...this.state,
-        //     groupName: JSON.parse(localStorage.getItem('group')).name
-        // })
-    }
-
-    componentWillUnmount() {
-        this.props.unregisterHandler()
-    }
-
-    onMessageReceived(entry) {
-        if ('message' in entry){
-            console.log('onMessageReceived:', entry)
-            this.updateChatHistory(entry.message)
-        }
-    }
-
-    updateChatHistory(entry) {
-        console.log('chat history updated')
-        entry.date = new Date(entry.date)
-        this.setState({ messages: this.state.messages.concat(entry) }
-                        , () => {
-                                this.refs.chatBody.scrollTo({
-                                    top: this.refs.chatBody.scrollHeight,
-                                    left: 0,
-                                    behavior: 'smooth'
-                                })
-                        })
     }
 
     messageList() {
         let list = []
-        let { messages } = this.state
+        //let { messages } = this.state
+        let messages = this.props.chatHistory
         for (let i = 0; i < messages.length; i ++) {
             let msg = messages[i]
+            if(msg.title === this.props.user){
+                msg.position = 'right'
+            }
+            else{msg.position = 'left'}
             list.push(
                 <div className={`d-flex mb-4 ${msg.position}-box`} key={`msg-${i}`}>
                     <Icon className={msg.position} name={msg.title} style={{ width: '28px', height: '28px', flexShrink: 0 }} />
@@ -120,29 +77,26 @@ class Chat extends React.Component {
         return list
     }
 
+    scrollDown(){
+        this.refs.chatBody.scrollTo({
+            top: this.refs.chatBody.scrollHeight,
+            left: 0,
+            behavior: 'smooth'
+        })
+    }
+
     addMessage(msg) {
         this.props.onSendMessage(msg, (err) => {
             console.log('in chat add Message')
             console.log(msg)
             return null
           })
-        
-        // this.setState({
-        //     ...this.state,
-        //     messages: [...this.state.messages, msg]
-        // }, () => {
-        //     this.refs.chatBody.scrollTo({
-        //         top: this.refs.chatBody.scrollHeight,
-        //         left: 0,
-        //         behavior: 'smooth'
-        //     })
-        // })
     }
 
     sendMessage() {
         let textAreaArr = this.refs.input.input
         this.addMessage({
-            title: "You",
+            title: this.props.user,
             position: "right",
             type: "text",
             text: textAreaArr.value,
