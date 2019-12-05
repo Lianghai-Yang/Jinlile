@@ -30,8 +30,9 @@ class Chat extends React.Component {
 
     sideIconLeft() {
         return (
-           // <FaAngleLeft color="#007bff" size="1.5rem" onClick={() => window.location.href='/map'} className="flex-grow-0" />
-           <Link color="#007bff" size="1.5rem" href='/map' className="flex-grow-0" />
+           <Link href="/map">
+               <a><FaAngleLeft color="#007bff" size="1.5rem" className="flex-grow-0" /></a>
+            </Link>
         )
     }
 
