@@ -1,5 +1,6 @@
 import event from './index'
 import axios from 'axios'
+import { debounce } from 'throttle-debounce'
 
 const interval = 3000
 
@@ -24,23 +25,33 @@ export function getCurrentPosition() {
 let intervalId = null
 
 async function emitPositionEvent() {
+    let position = { lng: null, lat: null }
     try {
-        let position = await getCurrentPosition()
+        position = await getCurrentPosition()
         event.emit('position', position)
-        axios.put('/users/position', position)
-        return position
     }
     catch(e) {
         event.emit('error', e)
     }
+
+    try {
+        let group = JSON.parse(localStorage.getItem('group'))
+        if (group) {
+            axios.put('/users/position', position)
+        }
+    }
+    catch(e) {
+        console.log(e)
+    }
+    return position
 }
 
 export async function start() {
     await emitPositionEvent()
     if (intervalId != null) return intervalId
-    intervalId = setInterval(async () => {
+    intervalId = setInterval(debounce(interval - 500, async () => {
         await emitPositionEvent()
-    }, interval)
+    }), interval)
     return intervalId
 }
 

@@ -2,6 +2,7 @@ import React from 'react'
 import { withRouter } from 'next/router'
 import Layout from '../components/layout'
 import Spinner from 'react-bootstrap/Spinner'
+import axios from 'axios'
 
 class Index extends React.Component {
 
@@ -16,12 +17,14 @@ class Index extends React.Component {
         }
     }
 
-    auth() {
-        return new Promise((resolve, reject) => {
-            setTimeout(function() {
-                resolve(false)
-            }, 3000)
-        })
+    async auth() {
+        try {
+            let { data } = await axios.get('/users/authenticated')
+            return data.msg
+        }
+        catch(e) {
+            return false
+        }
     }
 
     render() {
