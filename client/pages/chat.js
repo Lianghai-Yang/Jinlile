@@ -43,17 +43,13 @@ class Chat extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
+        console.log('chat components did update')
         if (this.props.chatHistory !== prevProps.chatHistory) {
             let chatHistory = this.props.chatHistory
-            this.setState({ messages: chatHistory}
-                    , () => {
-                        this.refs.chatBody.scrollTo({
-                            top: this.refs.chatBody.scrollHeight,
-                            left: 0,
-                            behavior: 'smooth'
-                        })
-                    }
-                )
+            this.setState({messages: chatHistory},
+                ()=>{
+                    this.scrollDown()
+                })
         }
     }
 
@@ -63,6 +59,10 @@ class Chat extends React.Component {
         let messages = this.props.chatHistory
         for (let i = 0; i < messages.length; i ++) {
             let msg = messages[i]
+            if(msg.title === this.props.user){
+                msg.position = 'right'
+            }
+            else{msg.position = 'left'}
             list.push(
                 <div className={`d-flex mb-4 ${msg.position}-box`} key={`msg-${i}`}>
                     <Icon className={msg.position} name={msg.title} style={{ width: '28px', height: '28px', flexShrink: 0 }} />
@@ -77,6 +77,14 @@ class Chat extends React.Component {
         return list
     }
 
+    scrollDown(){
+        this.refs.chatBody.scrollTo({
+            top: this.refs.chatBody.scrollHeight,
+            left: 0,
+            behavior: 'smooth'
+        })
+    }
+
     addMessage(msg) {
         this.props.onSendMessage(msg, (err) => {
             console.log('in chat add Message')
@@ -88,7 +96,7 @@ class Chat extends React.Component {
     sendMessage() {
         let textAreaArr = this.refs.input.input
         this.addMessage({
-            title: "You",
+            title: this.props.user,
             position: "right",
             type: "text",
             text: textAreaArr.value,

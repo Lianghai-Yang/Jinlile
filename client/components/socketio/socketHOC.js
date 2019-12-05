@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import socketFunc from './socketFunc'
-// import axios from "axios";
 
 var socketState = {
   client: null,
@@ -25,28 +24,13 @@ function socketHandler(k, v) {
 }
 
 function addregisterHandler(func) {
-    if (func === null){
-      socketState.client.registerHandler(onMessageReceived)
-    }
-    else{
-      socketState.client.registerHandler(func)
-    }
+    socketState.client.registerHandler(func)
     return socketState
 }
 
 function addHistory(entry) {
   socketState.chatHistory = socketState.chatHistory.concat(entry)
   return socketState
-}
-
-function onMessageReceived(entry) {
-  console.log('onMessageReceived:', entry)
-  if ('message' in entry){
-    entry = entry.message
-    entry.date = new Date(entry.date)
-    
-    addHistory(entry)
-  }
 }
 
 const socketWrapper = (ComponentToWrap) => {
@@ -71,12 +55,15 @@ const socketWrapper = (ComponentToWrap) => {
         this.setState({socketState, socketState})
       }
     }
+
     componentDidMount(){
       if (this.state.socketState.roomEntered === false){
+        let {user, group} = this.getUserGroup()
+        user = user.name
+        group = group.groupName
+        
         let client = socketFunc()
         let roomEntered = true
-        let user = 'Wang'
-        let group = 'Colleagues'
         this.register(client, user)
         socketHandler('user', user)
         socketHandler('group', group)
@@ -102,17 +89,12 @@ const socketWrapper = (ComponentToWrap) => {
           }
         )
         socketHandler('roomEntered', roomEntered)
-        socketState = addregisterHandler(this.onMessageReceived)
-        //socketState = addregisterHandler(null)
         this.setState({
           socketState, socketState
         })
-        console.log(socketState)
+        console.log('socketState:', socketState)
       }
-      else{
-        socketState = addregisterHandler(this.onMessageReceived)
-        //addregisterHandler(null)
-      }
+      addregisterHandler(this.onMessageReceived)
       
     }
 
@@ -123,7 +105,8 @@ const socketWrapper = (ComponentToWrap) => {
     getUserGroup(){
       const user = JSON.parse(localStorage.getItem('user'));
       const group = JSON.parse(localStorage.getItem('group'));
-      console.log(user)
+      console.log('user and group:')
+      console.log(user, group)
       return {user: user, group: group}
     }
 
@@ -170,8 +153,8 @@ const socketWrapper = (ComponentToWrap) => {
         <ComponentToWrap
         onLeave={
           () => this.onLeaveChatroom(
-            chatroom.name,
-            () => history.push('/')
+            this.state.socketState.group,
+            () => null
           )
         }
         onSendMessage={
@@ -181,6 +164,8 @@ const socketWrapper = (ComponentToWrap) => {
             cb
           )
         }
+        user={retSocketState('user')}
+        group={retSocketState('group')}
         chatHistory={retSocketState('chatHistory')}
         {...this.props}
         />

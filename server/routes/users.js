@@ -54,7 +54,7 @@ router.post("/code", async (req,res) => {
     // res.json(code);
     console.log(code)
     mailCode({ code, email })
-    const userInfo = await userData.getByUserEmail(email, { _id: 1 })
+    const userInfo = await userData.getByUserEmail(email, { _id: 1, name: 1})
     req.session.user = {
       ...userInfo,
       loggedIn: false

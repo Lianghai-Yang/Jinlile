@@ -165,7 +165,7 @@ class Map extends React.Component {
     sendMessage() {
         let input = document.getElementById('message-input')
         let msg = {
-            title: 'You',
+            title: this.props.user,
             position: 'right',
             type: 'text',
             text: input.value,
