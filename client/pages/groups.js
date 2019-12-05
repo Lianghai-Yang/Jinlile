@@ -1,7 +1,7 @@
 import React from 'react'
 import ListGroup from 'react-bootstrap/ListGroup'
 import Layout from '../components/layout'
-import { Button, Container } from 'react-bootstrap'
+import { Button, Container, Alert } from 'react-bootstrap'
 import { withRouter } from "next/router";
 import axios from "axios";
 import withAuthentication from '../components/withAuthentication'
@@ -10,7 +10,11 @@ class Groups extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            groups: []
+            groups: [],
+            alert: {
+                show: false,
+                content: '',
+            }
         }
     }
 
@@ -69,7 +73,6 @@ class Groups extends React.Component {
                             onClick={this.handleGroupSelect.bind(this, group)}
                             >
                                 {group.groupName}
-                                {/* {group.name} */}
                             </ListGroup.Item>
                         ))}
                     </ListGroup>
@@ -78,16 +81,88 @@ class Groups extends React.Component {
         )
     }
     
+    async create() {
+        let groupName = window.prompt('Enter your group name:')
+        if (groupName == null) {
+            return
+        }
+        if (groupName == '') {
+            return this.setState({
+                alert: {
+                    show: true,
+                    content: 'Group name cannot be empty.',
+                }
+            })
+        }
+        try {
+            let { data } = await axios.post(`/groups/${groupName}`)
+            if (data.group) {
+                return this.handleGroupSelect(data.group)
+            }
+            this.setState({
+                alert: {
+                    show: true,
+                    content: data.msg
+                }
+            })
+        }
+        catch(e) {
+            this.setState({
+                alert: {
+                    show: true,
+                    content: e.message
+                }
+            })
+        }
+
+    }
+
+    async join() {
+        let groupName = window.prompt('Enter the group name you want to join')
+        if (groupName == null) {
+            return
+        }
+        if (groupName == '') {
+            return this.setState({
+                alert: {
+                    show: true,
+                    content: 'Group name cannot be empty'
+                }
+            })
+        }
+        try {
+            let { data } = await axios.post(`/users/groups/${groupName}`)
+            if (data.group) this.handleGroupSelect(data.group)
+            else {
+                this.setState({
+                    alert: {
+                        show: true,
+                        content: data.msg
+                    }
+                })
+            }
+        }
+        catch(e) {
+            this.setState({
+                alert: {
+                    show: true,
+                    content: e.message
+                }
+            })
+        }
+    }
+    
     render() {
         return (
             <Layout>
                 <Container>
+                    <Alert dismissible onClose={() => this.setState({ alert: { show: false } })} className="mt-4" show={this.state.alert.show} variant="danger">{this.state.alert.content}</Alert>
                     {this.state.groups.length > 0 ? this.selectGroups() : ''}
                     <div className="mt-5">
                         <p className="text-muted">Want to have a new group?</p>
-                        <Button variant="dark" size="lg" className="btn-block">Create</Button>
+                        <Button onClick={() => this.create()} variant="dark" size="lg" className="btn-block">Create</Button>
                         <p className="text-muted mt-4">Or join a new group.</p>
-                        <Button variant="secondary" size="lg" className="btn-block">Search</Button>
+                        <Button onClick={() => this.join()} variant="secondary" size="lg" className="btn-block">Join</Button>
                     </div>
                 </Container>
             </Layout>

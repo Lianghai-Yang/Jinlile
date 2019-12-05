@@ -13,7 +13,22 @@ const getCollectionFn = collection => {
   };
 };
 
-module.exports = {
+const collections = {
   users: getCollectionFn("users"),
   groups: getCollectionFn("groups")
 };
+
+async function indexes() {
+  let groups = await collections.groups();
+  groups.createIndex(
+    { name: 1 },
+    { unique: true },
+    (err, result) => {
+      if (err) console.log(err)
+    }
+  )
+}
+
+indexes()
+
+module.exports = collections

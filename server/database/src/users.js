@@ -108,6 +108,11 @@ const getCodeByUserEmail = async(userEmail) =>{
   return userGo.email_code;
 }
 
+const existsInGroup = async (uid, groupId) => {
+  let userCollection = await users()
+  let result = await userCollection.findOne({ _id: uid, "groups.groupId": groupId }, { projection: { _id : 1 } })
+  return !(result == null)
+}
 
 module.exports = {
     create,
@@ -117,5 +122,6 @@ module.exports = {
     addGroupToUser,
     createCode,
     getByUserEmail,
-    getCodeByUserEmail
+    getCodeByUserEmail,
+    existsInGroup,
 }

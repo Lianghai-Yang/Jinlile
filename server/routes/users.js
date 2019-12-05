@@ -72,6 +72,29 @@ router.use(authenticate)
   * Authentication Required for routes below this line!
   * ===================================================
   */
+
+router.post('/groups/:groupName', async (req, res, next) => {
+  let { groupName } = req.params
+  let { user } = req.session
+  let group = null
+  try {
+    group = await groupData.getByGroupName(groupName)
+  }
+  catch(e) {
+    console.log(e.message)
+  }
+  if (group == null) {
+    return res.status(404).send({ msg: 'group not found' })
+  }
+  let exists = await userData.existsInGroup(user._id, group._id)
+  if (exists == false) {
+    await Promise.all([
+      userData.addGroupToUser(user.name, group._id, groupName),
+      groupData.addUserToGroup(groupName, user._id, user.name)
+    ])
+  }
+  return res.send({ msg: 'ok',  group: { groupId: group._id, groupName: groupName } })
+})
  
 router.get('/authenticated', (req, res, next) => {
   res.send({ msg: true })
@@ -105,6 +128,11 @@ router.get('/group/:groupId/positions', async (req, res, next) => {
     res.status(500).send({ msg: 'internal server error' })
     console.log(e)
   }
+
+  if (group == null) {
+    return res.status(404).send({ msg: 'group not found' })
+  }
+  
   let userIds = group.users.map(user => user.userId)
   let positions = await redis.geoposAsync('jinlile:positions', ...userIds)
 
