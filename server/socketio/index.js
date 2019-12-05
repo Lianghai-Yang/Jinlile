@@ -1,4 +1,5 @@
 const server = require('http').createServer()
+const config = require('../jinlile.server.config')
 const io = require('socket.io')(server)
 const ClientManager = require('./clientManager')
 const ChatroomManager = require('./chatroomManager')
@@ -36,9 +37,9 @@ io.on('connection', function(client) {
     })
 })
 
-server.listen(8800, function(err) {
+server.listen(config.SOCKETIO_PORT, function(err) {
     if (err) throw err
-    console.log('SocketIO listening on port 8800')
+    console.log('SocketIO listening on port:', config.SOCKETIO_PORT)
 })
 
 module.exports = server
