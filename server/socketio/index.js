@@ -4,7 +4,6 @@ const io = require('socket.io')(server)
 const ClientManager = require('./clientManager')
 const ChatroomManager = require('./chatroomManager')
 const makeHandlers = require('./handlers')
-const config = require('../jinlile.server.config')
 
 const clientManager = ClientManager()
 const chatroomManager = ChatroomManager()
