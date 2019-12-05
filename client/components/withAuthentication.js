@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Spinner, Container } from 'react-bootstrap'
+import { Spinner } from 'react-bootstrap'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 

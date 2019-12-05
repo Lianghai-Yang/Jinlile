@@ -3,8 +3,10 @@ var express = require('express');
 var router = express.Router();
 const data = require("../database/src");
 const userData = data.users;
+const groupData = data.groups
 const mailer = require('../mailer')
 const authenticate = require('../middlewares/authenticate')
+const redis = require('../redisClient')
 // const validator = require('validator')
 
 // /* GET users listing. */
@@ -66,8 +68,15 @@ router.post("/code", async (req,res) => {
   }
 });
 
+
 router.use(authenticate)
 
+ /**
+  * ===================================================
+  * Authentication Required for routes below this line!
+  * ===================================================
+  */
+ 
 router.get('/authenticated', (req, res, next) => {
   res.send({ msg: true })
 })
@@ -80,6 +89,31 @@ router.get("/:id", async (req, res) => {
     res.status(404).json({ message: "not found!" });
   }
 });
+
+router.get("/", async (req, res) => {
+  try {
+    const user = await userData.getById(req.session.user._id, { email_code: 0, email: 0 });
+    res.json(user);
+  } catch (e) {
+    res.status(404).json({ message: "not found!" });
+  }
+});
+
+router.get('/group/:groupId/positions', async (req, res, next) => {
+  let group = null
+
+  try {
+    group = await groupData.getById(req.params.groupId)
+  }
+  catch(e) {
+    res.status(500).send({ msg: 'internal server error' })
+    console.log(e)
+  }
+  let userIds = group.users.map(user => user.userId)
+  let positions = await redis.geoposAsync('jinlile:positions', ...userIds)
+  console.log(positions)
+  res.send(positions)
+})
 
 async function mailCode({ email, code }) {
   let info = await mailer.sendMail({
