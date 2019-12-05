@@ -1,7 +1,7 @@
 import React from "react";
 import Layout from '../components/layout';
 import Form from 'react-bootstrap/Form';
-import Link from 'next/link';
+import Link from 'next/Link';
 import { Alert, Container } from 'react-bootstrap';
 import { withRouter } from 'next/router';
 import axios from "axios";
