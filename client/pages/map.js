@@ -152,10 +152,32 @@ class Map extends React.Component {
         )
     }
 
+    componentDidUpdate(prevProps) {
+        if (this.props.chatHistory !== prevProps.chatHistory) {
+            let chatHistory = this.props.chatHistory
+            let newmessage = chatHistory[chatHistory.length-1]
+            let msg = newmessage.text
+            let from = newmessage.title
+            this.showToast({ msg, from: from, time: 'Now' })
+        }
+    }
+
     sendMessage() {
         let input = document.getElementById('message-input')
-        let msg = input.value
-        this.showToast({ msg, from: 'You', time: 'Now' })
+        let msg = {
+            title: 'You',
+            position: 'right',
+            type: 'text',
+            text: input.value,
+            date: new Date()
+        }
+        this.props.onSendMessage(msg, (err) => {
+            console.log('in chat add Message')
+            console.log(msg)
+            return null
+          })
+        
+        // this.showToast({ msg, from: 'You', time: 'Now' })
         input.value = ""
     }
 

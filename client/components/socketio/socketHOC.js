@@ -24,14 +24,29 @@ function socketHandler(k, v) {
   }
 }
 
-function addregisterHandler(entry) {
-    socketState.client.registerHandler(entry)
+function addregisterHandler(func) {
+    if (func === null){
+      socketState.client.registerHandler(onMessageReceived)
+    }
+    else{
+      socketState.client.registerHandler(func)
+    }
     return socketState
 }
 
 function addHistory(entry) {
   socketState.chatHistory = socketState.chatHistory.concat(entry)
   return socketState
+}
+
+function onMessageReceived(entry) {
+  console.log('onMessageReceived:', entry)
+  if ('message' in entry){
+    entry = entry.message
+    entry.date = new Date(entry.date)
+    
+    addHistory(entry)
+  }
 }
 
 const socketWrapper = (ComponentToWrap) => {
@@ -55,7 +70,6 @@ const socketWrapper = (ComponentToWrap) => {
         socketState = socketHandler('chatHistory', this.state.chatHistory)
         this.setState({socketState, socketState})
       }
-        
     }
     componentDidMount(){
       if (this.state.socketState.roomEntered === false){
@@ -89,10 +103,15 @@ const socketWrapper = (ComponentToWrap) => {
         )
         socketHandler('roomEntered', roomEntered)
         socketState = addregisterHandler(this.onMessageReceived)
+        //socketState = addregisterHandler(null)
         this.setState({
           socketState, socketState
         })
         console.log(socketState)
+      }
+      else{
+        socketState = addregisterHandler(this.onMessageReceived)
+        //addregisterHandler(null)
       }
       
     }
@@ -139,11 +158,11 @@ const socketWrapper = (ComponentToWrap) => {
         entry = entry.message
         entry.date = new Date(entry.date)
         
-        this.setState(
-          {socketState: addHistory(entry)}
-        )
-        console.log(this.state.socketState)
+        addHistory(entry)
       }
+      this.setState({
+        socketState: socketHandler(null, null)
+      })
     }
 
     render() {
