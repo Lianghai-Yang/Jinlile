@@ -31,6 +31,7 @@ class Groups extends React.Component {
             const user = JSON.parse(localStorage.getItem('user'));
             const uid = user._id;
             const { data } = await axios.get(`/users/${uid}`);
+            localStorage.setItem('userName',data.name);
             const groups = data.groups ? data.groups : [];
             // return [
             //     { name: 'My Family', gid: 'myFamily' },

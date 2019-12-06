@@ -73,6 +73,96 @@ router.use(authenticate)
   * ===================================================
   */
 
+// router.put('./userName', async(req,res) =>{
+//   console.log("we hit put userName in router");
+//   const newNameInfo = req.body;
+//   let {newName} = newNameInfo;
+
+//   const user = req.session.user;
+
+//   if (!newName) {
+//     res.status(400).send({ msg: 'missing newName' });
+//   }
+
+//   if(!user){
+//     res.status(400).send({ msg: 'missing user in req.session' });
+//   }
+
+//   try{
+//     const updatedUser = await userData.updateUserNameById(user._id,newName);
+//     req.session.user = {
+//       ...updatedUser,
+//       loggedIn: true
+//     }
+//     res.send({ msg: 'sent', user: updatedUser });
+//   }catch(e){
+//     console.log(e)
+//     res.sendStatus(500);
+//   }
+// })
+
+router.post('/userName', async (req,res) =>{
+  const newNameInfo = req.body;
+  let {newName} = newNameInfo;
+
+  const user = req.session.user;
+
+  if (!newName) {
+    res.status(400).send({ msg: 'missing newName' });
+  }
+
+  if(!user){
+    res.status(400).send({ msg: 'missing user in req.session' });
+  }
+
+  try{
+    const updatedUser = await userData.updateUserNameById(user._id,newName);
+    req.session.user = {
+      ...updatedUser,
+      loggedIn: true
+    }
+    res.send({ msg: 'sent', user: updatedUser });
+  }catch(e){
+    console.log(e)
+    res.sendStatus(500);
+  }
+
+})
+
+router.post('/dismissGroup', async (req,res) =>{
+  console.log("we hit dismiss router");
+  const groupInfo = req.body;
+  let {groupId} = groupInfo;
+
+  const user = req.session.user;
+
+  if (!groupId) {
+    res.status(400).send({ msg: 'missing groupId' });
+  }
+
+  if(!user){
+    res.status(400).send({ msg: 'missing user in req.session' });
+  }
+
+  try{
+    const updatedUser = await userData.deleteGroupFromUserByGidAndUid(user._id,groupId);
+    console.log(updatedUser);
+    const updatedGroup = await groupData.deleteUserFromGroupByGidAndUid(user._id,groupId);
+    console.log(updatedGroup);
+    req.session.user = {
+      ...updatedUser,
+      loggedIn: true
+    }
+    res.send({ msg: 'sent', user: updatedUser, group: updatedGroup });
+  }catch(e){
+    console.log(e)
+    res.sendStatus(500);
+  }
+
+})
+
+
+
 router.post('/groups/:groupName', async (req, res, next) => {
   let { groupName } = req.params
   let { user } = req.session

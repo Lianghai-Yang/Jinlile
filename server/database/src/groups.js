@@ -96,6 +96,28 @@ const getMessageFromGroupId = async(groupId) => {
     return targetGroup.messages;
 }
 
+const updateUserNameByUserId = async(groupId,userId,newName) => {
+    //update both groups list and message list
+    if (!groupId) throw "You must provide a groupId to search for";
+    if (!userId) throw "You must provide a userId to search for";
+    if (!newName) throw "You must provide a newName to search for";
+    let groupCollection = await groups();
+    const targetGroup = await groupCollection.findOne({_id:groupId});
+    let userList = targetGroup.users;
+    for(let i = 0; i<userList.length;i++){
+        if(userList[i].userId == userId){
+            userList[i].userName = newName;
+        }
+    }
+    let messageList = targetGroup.messages;
+    for(let i = 0; i<messageList.length; i++){
+        if(messageList[i].userId == userId){
+            messageList[i].userName = newName;
+        }
+    }
+    await groupCollection.updateOne({_id: groupId},{$set: { "messages": messageList, "users":userList }});
+}
+
 // let msg = getMessageFromGroupName("Group1");
 // console.log(msg);
 
@@ -107,5 +129,6 @@ module.exports = {
     addUserToGroup,
     addMessageToGroup,
     getMessageFromGroupName,
-    getMessageFromGroupId
+    getMessageFromGroupId,
+    updateUserNameByUserId
 }

@@ -1,6 +1,7 @@
 const mongoCollections = require("./mongoCollections");
 const users = mongoCollections.users;
 const uuid = require("node-uuid");
+const groupData = require("./groups");
 
 const getById = async (id, projection={}) =>{
     if (!id) throw "You must provide an id to search for";
@@ -114,6 +115,33 @@ const existsInGroup = async (uid, groupId) => {
   return !(result == null)
 }
 
+const updateUserNameById = async(uid,newName) => {
+  let userCollection = await users();
+  await userCollection.updateOne({_id: uid},{$set: {name: newName}});
+  const updatedUser = await userCollection.findOne({_id: uid});
+  //update group collection
+  const groups = updatedUser.groups;
+  for(let i = 0; i<groups.length; i++){
+    let {groupId} = groups[i];
+    groupData.updateUserNameByUserId(groupId,uid,newName);
+  }
+  return updatedUser;
+}
+
+const deleteGroupFromUserByGidAndUid = async(userId, groupId) =>{
+  let userCollection = await users();
+  const targetUser = await userCollection.findOne({_id: userId});
+  let groups = targetUser.groups;
+  let updatedGroups = [];
+  for(let i = 0; i<groups.length; i++){
+    if(groups[i].groupId!=groupId){
+      updatedGroups.push(groups[i]);
+    }
+  }
+  await userCollection.updateOne({_id: userId},{$set: {groups: updatedGroups}});
+  return await userCollection.findOne({_id: userId});
+}
+
 module.exports = {
     create,
     getById,
@@ -124,4 +152,6 @@ module.exports = {
     getByUserEmail,
     getCodeByUserEmail,
     existsInGroup,
+    updateUserNameById,
+    deleteGroupFromUserByGidAndUid
 }
