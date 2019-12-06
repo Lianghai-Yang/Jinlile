@@ -59,12 +59,12 @@ const socketWrapper = (ComponentToWrap) => {
     componentDidMount(){
       if (this.state.socketState.roomEntered === false){
         let {user, group} = this.getUserGroup()
-        user = user.name
-        group = group.groupName
+        user = user
+        group = group
         
         let client = socketFunc()
         let roomEntered = true
-        this.register(client, user)
+        this.register(client, user._id)
         socketHandler('user', user)
         socketHandler('group', group)
         socketState = socketHandler('client', client)
@@ -73,7 +73,7 @@ const socketWrapper = (ComponentToWrap) => {
         })
 
         this.onEnterChatroom(
-          group,
+          group.groupId,
           () => null,
           chatHistoryServer => {
             console.log('on enter chat room and get history:')
@@ -88,14 +88,15 @@ const socketWrapper = (ComponentToWrap) => {
             this.setState({chatHistory: filtedChatHistory}) 
           }
         )
-        socketHandler('roomEntered', roomEntered)
+        socketState = socketHandler('roomEntered', roomEntered)
         this.setState({
           socketState, socketState
         })
         console.log('socketState:', socketState)
       }
       addregisterHandler(this.onMessageReceived)
-      
+      console.log('HOC state', this.state)
+      console.log('ret group', retSocketState('group').groupId)
     }
 
     componentWillUnmount() {
@@ -110,19 +111,19 @@ const socketWrapper = (ComponentToWrap) => {
       return {user: user, group: group}
     }
 
-    onEnterChatroom(chatroomName, onNoUserSelected, onEnterSuccess) {
+    onEnterChatroom(chatroomId, onNoUserSelected, onEnterSuccess) {
       if (!this.state.socketState.user)
         return onNoUserSelected()
       console.log('enter chatroom success ......')
-      return this.state.socketState.client.join(chatroomName, (err, chatHistory) => {
+      return this.state.socketState.client.join(chatroomId, (err, chatHistory) => {
         if (err)
           return console.error(err)
         return onEnterSuccess(chatHistory)
       })
     }
     
-    onLeaveChatroom(chatroomName, onLeaveSuccess) {
-      this.state.socketState.client.leave(chatroomName, (err) => {
+    onLeaveChatroom(chatroomId, onLeaveSuccess) {
+      this.state.socketState.client.leave(chatroomId, (err) => {
         if (err)
           return console.error(err)
         return onLeaveSuccess()
@@ -151,15 +152,15 @@ const socketWrapper = (ComponentToWrap) => {
     render() {
       return (
         <ComponentToWrap
-        onLeave={
+        onLeave = {
           () => this.onLeaveChatroom(
-            this.state.socketState.group,
+            retSocketState('group').groupId,
             () => null
           )
         }
-        onSendMessage={
+        onSendMessage = {
           (message, cb) => this.state.socketState.client.message(
-            this.state.socketState.group,
+            retSocketState('group').groupId,
             message,
             cb
           )

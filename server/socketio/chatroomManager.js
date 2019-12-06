@@ -14,11 +14,11 @@ module.exports = function () {
   //     Chatroom(c)
   //   ])
   // )
-  async function addRoom(chatroomName) {
-    let group = await groups.getByGroupName(chatroomName)
-    console.log(group)
-    if (chatrooms.get(group.name) === undefined){
-      chatrooms.set(group.name, Chatroom(group))
+  async function addRoom(chatroomId) {
+    let group = await groups.getById(chatroomId)
+    console.log('add room', group)
+    if (chatrooms.get(group._id) === undefined){
+      chatrooms.set(group._id, Chatroom(group))
     }
   }
 
@@ -26,10 +26,10 @@ module.exports = function () {
     chatrooms.forEach(c => c.removeUser(client))
   }
 
-  async function getChatroomByName(chatroomName) {
-    await addRoom(chatroomName)
+  async function getChatroomById(chatroomId) {
+    await addRoom(chatroomId)
     //return await groups.getByGroupName(chatroomName)
-    return chatrooms.get(chatroomName)
+    return chatrooms.get(chatroomId)
   }
 
   function serializeChatrooms() {
@@ -39,7 +39,7 @@ module.exports = function () {
   return {
     addRoom,
     removeClient,
-    getChatroomByName,
+    getChatroomById,
     serializeChatrooms
   }
 }

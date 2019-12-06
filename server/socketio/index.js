@@ -15,7 +15,7 @@ io.on('connection', function(client) {
         handleLeave,
         handleMessage,
         handleGetChatrooms,
-        handleGetAvailableUsers,
+        //handleGetAvailableUsers,
         handleDisconnect
     } = makeHandlers(client, clientManager, chatroomManager)
 
@@ -26,7 +26,7 @@ io.on('connection', function(client) {
     client.on('leave', handleLeave)
     client.on('message', handleMessage)
     client.on('chatrooms', handleGetChatrooms)
-    client.on('availableUsers', handleGetAvailableUsers)
+    // client.on('availableUsers', handleGetAvailableUsers)
     client.on('disconnect', function() {
         console.log('client disconnect...', client.id)
         handleDisconnect()

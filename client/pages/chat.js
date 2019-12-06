@@ -59,7 +59,7 @@ class Chat extends React.Component {
         let messages = this.props.chatHistory
         for (let i = 0; i < messages.length; i ++) {
             let msg = messages[i]
-            if(msg.title === this.props.user){
+            if(msg.userId === this.props.user._id){
                 msg.position = 'right'
             }
             else{msg.position = 'left'}
@@ -96,7 +96,8 @@ class Chat extends React.Component {
     sendMessage() {
         let textAreaArr = this.refs.input.input
         this.addMessage({
-            title: this.props.user,
+            userId: this.props.user._id,
+            title: this.props.user.name,
             position: "right",
             type: "text",
             text: textAreaArr.value,

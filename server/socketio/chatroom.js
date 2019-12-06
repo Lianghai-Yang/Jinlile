@@ -1,7 +1,7 @@
 const data = require("../database/src");
 const groups = data.groups;
 
-module.exports = function ({ name, image, messages }) {
+module.exports = function ({ _id, image, messages }) {
     const members = new Map()
     let chatHistory = []
 
@@ -9,6 +9,7 @@ module.exports = function ({ name, image, messages }) {
     for (let i=0; i<messages.length; i++){
       chatHistory.push({
         message: {
+            userId: messages[i].userId,
             title: messages[i].userName,
             position: 'left',
             type: 'text',
@@ -24,12 +25,13 @@ module.exports = function ({ name, image, messages }) {
     }
   
     async function addEntry(entry) {
+      console.log('add entry', entry)
       chatHistory = chatHistory.concat(entry)
       if ('message' in entry){
-          await groups.addMessageToGroup(name, entry.user._id, 
+          await groups.addMessageToGroupById(_id, entry.user._id, 
                       entry.user.name, entry.message.text, entry.message.date)
       }
-      console.log(chatHistory)
+      // console.log(chatHistory)
     }
   
     function getChatHistory() {
@@ -46,7 +48,7 @@ module.exports = function ({ name, image, messages }) {
   
     function serialize() {
       return {
-        name,
+        _id,
         image,
         numMembers: members.size
       }
