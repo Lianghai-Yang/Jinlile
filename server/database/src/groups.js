@@ -160,6 +160,22 @@ const updateUserNameByUserId = async(groupId,userId,newName) => {
 // let msg = getMessageFromGroupName("Group1");
 // console.log(msg);
 
+const deleteUserFromGroupByGidAndUid = async(userId, groupId) =>{
+    let groupCollection = await groups();
+    const targetGroup = await groupCollection.findOne({_id: groupId});
+    let users = targetGroup.users;
+    let updatedUsers = [];
+    for(let i = 0; i<users.length; i++){
+      if(users[i].userId!=userId){
+        updatedUsers.push(users[i]);
+      }
+    }
+    await groupCollection.updateOne({_id: groupId},{$set: {users: updatedUsers}});
+    return await groupCollection.findOne({_id: groupId});
+  }
+
+
+
 module.exports = {
     create,
     getById,
@@ -171,5 +187,6 @@ module.exports = {
     addMessageToGroupById,
     getMessageFromGroupName,
     getMessageFromGroupId,
-    updateUserNameByUserId
+    updateUserNameByUserId,
+    deleteUserFromGroupByGidAndUid
 }
