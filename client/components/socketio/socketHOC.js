@@ -9,6 +9,14 @@ var socketState = {
   chatHistory: []
 }
 
+function changeName(id, newName){
+  for (let i=0; i<socketState.chatHistory.length; i++){
+    if (socketState.chatHistory[i].userId == id){
+      socketState.chatHistory[i].title = newName
+    }
+  }
+}
+
 function retSocketState(k){
   return socketState[k]
 }
@@ -141,7 +149,7 @@ const socketWrapper = (ComponentToWrap) => {
       if ('message' in entry){
         entry = entry.message
         entry.date = new Date(entry.date)
-        
+        changeName(entry.userId, entry.title)
         addHistory(entry)
       }
       this.setState({
