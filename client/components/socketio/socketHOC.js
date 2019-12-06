@@ -3,10 +3,18 @@ import socketFunc from './socketFunc'
 
 var socketState = {
   client: null,
-  user: null,
-  group: null,
+  // user: null,
+  // group: null,
   roomEntered: false,
   chatHistory: []
+}
+
+function changeName(id, newName){
+  for (let i=0; i<socketState.chatHistory.length; i++){
+    if (socketState.chatHistory[i].userId == id){
+      socketState.chatHistory[i].title = newName
+    }
+  }
 }
 
 function retSocketState(k){
@@ -59,21 +67,21 @@ const socketWrapper = (ComponentToWrap) => {
     componentDidMount(){
       if (this.state.socketState.roomEntered === false){
         let {user, group} = this.getUserGroup()
-        user = user.name
-        group = group.groupName
+        user = user
+        group = group
         
         let client = socketFunc()
         let roomEntered = true
-        this.register(client, user)
-        socketHandler('user', user)
-        socketHandler('group', group)
+        this.register(client, user._id)
+        // socketHandler('user', user)
+        // socketHandler('group', group)
         socketState = socketHandler('client', client)
         this.setState({
           socketState, socketState
         })
 
         this.onEnterChatroom(
-          group,
+          group.groupId,
           () => null,
           chatHistoryServer => {
             console.log('on enter chat room and get history:')
@@ -88,14 +96,15 @@ const socketWrapper = (ComponentToWrap) => {
             this.setState({chatHistory: filtedChatHistory}) 
           }
         )
-        socketHandler('roomEntered', roomEntered)
+        socketState = socketHandler('roomEntered', roomEntered)
         this.setState({
           socketState, socketState
         })
         console.log('socketState:', socketState)
       }
       addregisterHandler(this.onMessageReceived)
-      
+      console.log('HOC state', this.state)
+      //console.log('ret group', retSocketState('group').groupId)
     }
 
     componentWillUnmount() {
@@ -110,19 +119,19 @@ const socketWrapper = (ComponentToWrap) => {
       return {user: user, group: group}
     }
 
-    onEnterChatroom(chatroomName, onNoUserSelected, onEnterSuccess) {
-      if (!this.state.socketState.user)
-        return onNoUserSelected()
+    onEnterChatroom(chatroomId, onNoUserSelected, onEnterSuccess) {
+      //if (!this.state.socketState.user)
+      //  return onNoUserSelected()
       console.log('enter chatroom success ......')
-      return this.state.socketState.client.join(chatroomName, (err, chatHistory) => {
+      return this.state.socketState.client.join(chatroomId, (err, chatHistory) => {
         if (err)
           return console.error(err)
         return onEnterSuccess(chatHistory)
       })
     }
     
-    onLeaveChatroom(chatroomName, onLeaveSuccess) {
-      this.state.socketState.client.leave(chatroomName, (err) => {
+    onLeaveChatroom(chatroomId, onLeaveSuccess) {
+      this.state.socketState.client.leave(chatroomId, (err) => {
         if (err)
           return console.error(err)
         return onLeaveSuccess()
@@ -140,7 +149,7 @@ const socketWrapper = (ComponentToWrap) => {
       if ('message' in entry){
         entry = entry.message
         entry.date = new Date(entry.date)
-        
+        changeName(entry.userId, entry.title)
         addHistory(entry)
       }
       this.setState({
@@ -151,21 +160,23 @@ const socketWrapper = (ComponentToWrap) => {
     render() {
       return (
         <ComponentToWrap
-        onLeave={
+        onLeave = {
           () => this.onLeaveChatroom(
-            this.state.socketState.group,
+            JSON.parse(localStorage.getItem('group')).groupId,
+            //retSocketState('group').groupId,
             () => null
           )
         }
-        onSendMessage={
+        onSendMessage = {
           (message, cb) => this.state.socketState.client.message(
-            this.state.socketState.group,
+            JSON.parse(localStorage.getItem('group')).groupId,
+            //retSocketState('group').groupId,
             message,
             cb
           )
         }
-        user={retSocketState('user')}
-        group={retSocketState('group')}
+        user={JSON.parse(localStorage.getItem('user'))}
+        group={JSON.parse(localStorage.getItem('group'))}
         chatHistory={retSocketState('chatHistory')}
         {...this.props}
         />

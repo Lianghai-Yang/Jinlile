@@ -15,30 +15,30 @@ function makeHandleEvent(client, clientManager, chatroomManager) {
       )
     }
   
-    function ensureValidChatroom(chatroomName) {
+    function ensureValidChatroom(chatroomId) {
       return ensureExists(
-        () => chatroomManager.getChatroomByName(chatroomName),
-        `invalid chatroom name: ${chatroomName}`
+        () => chatroomManager.getChatroomById(chatroomId),
+        `invalid chatroom id: ${chatroomId}`
       )
     }
   
-    function ensureValidChatroomAndUserSelected(chatroomName) {
+    function ensureValidChatroomAndUserSelected(chatroomId) {
       return Promise.all([
-        ensureValidChatroom(chatroomName),
+        ensureValidChatroom(chatroomId),
         ensureUserSelected(client.id)
       ])
         .then(([chatroom, user]) => Promise.resolve({ chatroom, user }))
     }
   
-    function handleEvent(chatroomName, createEntry) {
-      return ensureValidChatroomAndUserSelected(chatroomName)
+    function handleEvent(chatroomId, createEntry) {
+      return ensureValidChatroomAndUserSelected(chatroomId)
         .then(function ({ chatroom, user }) {
           // append event to chat history
           const entry = { user, ...createEntry() }
           chatroom.addEntry(entry)
-          console.log('entry added...')
+          console.log('entry added...', chatroomId)
           // notify other clients in chatroom
-          chatroom.broadcastMessage({ chat: chatroomName, ...entry })
+          chatroom.broadcastMessage({ chat: chatroomId, ...entry })
           return chatroom
         })
     }
@@ -49,20 +49,20 @@ function makeHandleEvent(client, clientManager, chatroomManager) {
 module.exports = function (client, clientManager, chatroomManager) {
     const handleEvent = makeHandleEvent(client, clientManager, chatroomManager)
   
-    function handleRegister(userName, callback) {
-      if (!clientManager.isUserAvailable(userName))
+    function handleRegister(userId, callback) {
+      if (!clientManager.isUserAvailable(userId))
         return callback('user is not available')
   
-      const user = clientManager.getUserByName(userName)
+      const user = clientManager.getUserById(userId)
       clientManager.registerClient(client, user)
   
       return callback(null, user)
     }
   
-    function handleJoin(chatroomName, callback) {
-      chatroomManager.addRoom(chatroomName)
-      const createEntry = () => ({ event: `joined ${chatroomName}` })
-      handleEvent(chatroomName, createEntry)
+    function handleJoin(chatroomId, callback) {
+      chatroomManager.addRoom(chatroomId)
+      const createEntry = () => ({ event: `joined ${chatroomId}` })
+      handleEvent(chatroomId, createEntry)
         .then(function (chatroom) {
           // add member to chatroom
           chatroom.addUser(client)
@@ -73,10 +73,10 @@ module.exports = function (client, clientManager, chatroomManager) {
         .catch(callback)
     }
   
-    function handleLeave(chatroomName, callback) {
-      const createEntry = () => ({ event: `left ${chatroomName}` })
+    function handleLeave(chatroomId, callback) {
+      const createEntry = () => ({ event: `left ${chatroomId}` })
   
-      handleEvent(chatroomName, createEntry)
+      handleEvent(chatroomId, createEntry)
         .then(function (chatroom) {
           // remove member from chatroom
           chatroom.removeUser(client.id)
@@ -85,10 +85,11 @@ module.exports = function (client, clientManager, chatroomManager) {
         .catch(callback)
     }
   
-    function handleMessage({ chatroomName, message } = {}, callback) {
+    function handleMessage({ chatroomId, message } = {}, callback) {
+      console.log("handle messages", chatroomId, message)
       const createEntry = () => ({ message })
-      
-      handleEvent(chatroomName, createEntry)
+      // ecfa6afe-4e1e-43f9-9e16-d5c2d0823006
+      handleEvent(chatroomId, createEntry)
         .then(() => callback(null))
         .catch(callback)
     }
@@ -97,9 +98,9 @@ module.exports = function (client, clientManager, chatroomManager) {
       return callback(null, chatroomManager.serializeChatrooms())
     }
   
-    function handleGetAvailableUsers(_, callback) {
-      return callback(null, clientManager.getAvailableUsers())
-    }
+    // function handleGetAvailableUsers(_, callback) {
+    //   return callback(null, clientManager.getAvailableUsers())
+    // }
   
     function handleDisconnect() {
       // remove user profile
@@ -114,7 +115,6 @@ module.exports = function (client, clientManager, chatroomManager) {
       handleLeave,
       handleMessage,
       handleGetChatrooms,
-      handleGetAvailableUsers,
       handleDisconnect
     }
   }

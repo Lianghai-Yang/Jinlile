@@ -20,29 +20,30 @@ module.exports = function () {
     clients.delete(client.id)
   }
 
-  function getAvailableUsers() {
-    const usersTaken = new Set(
-      Array.from(clients.values())
-        .filter(c => c.user)
-        .map(c => c.user.name)
-    )
-    return userTemplates
-      .filter(u => !usersTaken.has(u.name))
-  }
+  // function getAvailableUsers() {
+  //   const usersTaken = new Set(
+  //     Array.from(clients.values())
+  //       .filter(c => c.user)
+  //       .map(c => c.user._id)
+  //   )
+  //   return userTemplates
+  //     .filter(u => !usersTaken.has(u._id))
+  // }
 
-  function isUserAvailable(userName) {
+  function isUserAvailable(userId) {
     const usersTaken = new Set(
       Array.from(clients.values())
         .filter(c => c.user)
-        .map(c => c.user.name)
+        .map(c => c.user._id)
     )
-    return !usersTaken.has(userName)
+    return !usersTaken.has(userId)
 
     // return getAvailableUsers().some(u => u.name === userName)
   }
 
-  async function getUserByName(userName) {
-    return await users.getByUserName(userName)
+  async function getUserById(userId) {
+    // return await users.getByUserName(userName)
+    return await users.getById(userId)
     // return userTemplates.find(u => u.name === userName)
   }
 
@@ -54,9 +55,8 @@ module.exports = function () {
     addClient,
     registerClient,
     removeClient,
-    getAvailableUsers,
     isUserAvailable,
-    getUserByName,
+    getUserById,
     getUserByClientId
   }
 }

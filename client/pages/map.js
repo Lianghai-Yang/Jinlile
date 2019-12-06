@@ -1,12 +1,12 @@
 import React from 'react'
-import Link from 'next/Link'
+import Link from 'next/link'
 import Layout from '../components/layout'
 import GoogleMapReact from 'google-map-react'
 import { Alert, Button } from 'react-bootstrap'
 import events, { position } from '../events'
 import Marker from '../components/marker'
 import Spinner from 'react-bootstrap/Spinner'
-import { FaBars, FaComments, FaPaperPlane } from 'react-icons/fa'
+import { FaBars, FaComments, FaPaperPlane, FaBell } from 'react-icons/fa'
 import Form from "react-bootstrap/Form";
 import InputGroup from 'react-bootstrap/InputGroup'
 import Toast from 'react-bootstrap/Toast'
@@ -91,7 +91,6 @@ class Map extends React.Component {
     }
 
     async getFriendsPosition() {
-        console.log('testing')
         let groupId = this.state.group.groupId
         let { data } = await axios.get(`/users/group/${groupId}/positions`)
         return data
@@ -173,25 +172,33 @@ class Map extends React.Component {
     componentDidUpdate(prevProps) {
         if (this.props.chatHistory !== prevProps.chatHistory) {
             let chatHistory = this.props.chatHistory
-            let newmessage = chatHistory[chatHistory.length-1]
-            let msg = newmessage.text
-            let from = newmessage.title
-            this.showToast({ msg, from: from, time: 'Now' })
+            if (chatHistory.length>0){
+                let newmessage = chatHistory[chatHistory.length-1]
+                let msg = newmessage.text
+                let from = newmessage.title
+                let msgDate = newmessage.date
+                let nowDate = new Date()
+                let diffDate = nowDate.getTime() - msgDate.getTime()
+                diffDate = diffDate/1000
+                console.log('diffData',diffDate)
+                if (diffDate<=60){
+                    this.showToast({ msg, from: from, time: 'Now' })
+                }
+            }
         }
     }
 
     sendMessage() {
         let input = document.getElementById('message-input')
         let msg = {
-            title: this.props.user,
+            userId: this.props.user._id,
+            title: this.props.user.name,
             position: 'right',
             type: 'text',
             text: input.value,
             date: new Date()
         }
         this.props.onSendMessage(msg, (err) => {
-            console.log('in chat add Message')
-            console.log(msg)
             return null
           })
         
@@ -230,6 +237,25 @@ class Map extends React.Component {
             }
         })
     }
+
+    async needHelp() {
+        let data = await this.getFriendsPosition()
+        data = data.find(m=>{return m.userId == this.props.user._id})
+        console.log(data)
+        let helpMsg = `////////////////<br/> lat: ${data.lat}; lng: ${data.lng}\nPLEASE HELP ME!\n////////////////`
+        let msg = {
+            userId: this.props.user._id,
+            title: this.props.user.name,
+            position: 'right',
+            type: 'text',
+            text: helpMsg,
+            date: new Date()
+        }
+        this.props.onSendMessage(msg, (err) => {
+            return null
+          })
+        // alert('Come to me! I need HELP!')
+    }
     
     render() {
         return (
@@ -238,6 +264,9 @@ class Map extends React.Component {
                     <Spinner animation="border" role="status">
                         <span className="sr-only">Loading...</span>
                     </Spinner>
+                </div>
+                <div onClick={() => this.needHelp()} className="position-fixed text-danger" style={{ right: '13px', top: '70px', zIndex: 1, fontSize: '2rem' }}>
+                    <FaBell />
                 </div>
                 <small style={{ zIndex: 1 }} className="text-muted">Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></small>
                 <Alert
