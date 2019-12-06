@@ -15,15 +15,7 @@ class Chat extends React.Component {
         super(props)
         this.state = {
             groupName: '',
-            messages: [
-                // {
-                //     title: 'You',
-                //     position: 'right',
-                //     type: 'text',
-                //     text: 'Hi, we can start sharing our location!',
-                //     date: new Date(),
-                // },
-            ]
+            messages: []
         }
 
     }
@@ -108,7 +100,7 @@ class Chat extends React.Component {
     
     render() {
         return (
-            <Layout title={this.state.groupName} sideIconLeft={this.sideIconLeft} sideIconRight={this.sideIconRight}>
+            <Layout title={this.props.group.groupName} sideIconLeft={this.sideIconLeft} sideIconRight={this.sideIconRight}>
                 <Container fluid={true} className="d-flex flex-column flex-grow-1 flex-shrink-0" style={{height: '0 !important', overflow: 'hidden'}}>
                     <div ref="chatBody" className="chat-body mt-3 flex-grow-1 flex-shrink-0">
                         {this.messageList()}

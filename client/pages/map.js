@@ -172,10 +172,19 @@ class Map extends React.Component {
     componentDidUpdate(prevProps) {
         if (this.props.chatHistory !== prevProps.chatHistory) {
             let chatHistory = this.props.chatHistory
-            let newmessage = chatHistory[chatHistory.length-1]
-            let msg = newmessage.text
-            let from = newmessage.title
-            this.showToast({ msg, from: from, time: 'Now' })
+            if (chatHistory.length>0){
+                let newmessage = chatHistory[chatHistory.length-1]
+                let msg = newmessage.text
+                let from = newmessage.title
+                let msgDate = newmessage.date
+                let nowDate = new Date()
+                let diffDate = nowDate.getTime() - msgDate.getTime()
+                diffDate = diffDate/1000
+                console.log('diffData',diffDate)
+                if (diffDate<=60){
+                    this.showToast({ msg, from: from, time: 'Now' })
+                }
+            }
         }
     }
 
@@ -190,8 +199,6 @@ class Map extends React.Component {
             date: new Date()
         }
         this.props.onSendMessage(msg, (err) => {
-            console.log('in chat add Message')
-            console.log(msg)
             return null
           })
         
@@ -231,8 +238,23 @@ class Map extends React.Component {
         })
     }
 
-    needHelp() {
-        alert('Come to me! I need HELP!')
+    async needHelp() {
+        let data = await this.getFriendsPosition()
+        data = data.find(m=>{return m.userId == this.props.user._id})
+        console.log(data)
+        let helpMsg = `////////////////<br/> lat: ${data.lat}; lng: ${data.lng}\nPLEASE HELP ME!\n////////////////`
+        let msg = {
+            userId: this.props.user._id,
+            title: this.props.user.name,
+            position: 'right',
+            type: 'text',
+            text: helpMsg,
+            date: new Date()
+        }
+        this.props.onSendMessage(msg, (err) => {
+            return null
+          })
+        // alert('Come to me! I need HELP!')
     }
     
     render() {
