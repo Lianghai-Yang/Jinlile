@@ -32,6 +32,10 @@ module.exports = function () {
     return chatrooms.get(chatroomId)
   }
 
+  function getAllChatrooms() {
+    return chatrooms.values()
+  }
+
   function serializeChatrooms() {
     return Array.from(chatrooms.values()).map(c => c.serialize())
   }
@@ -40,6 +44,7 @@ module.exports = function () {
     addRoom,
     removeClient,
     getChatroomById,
+    getAllChatrooms,
     serializeChatrooms
   }
 }
