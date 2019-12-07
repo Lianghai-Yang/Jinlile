@@ -21,6 +21,12 @@ export default function () {
     socket.off('message')
   }
 
+  function disconnect() {
+    console.log('emit disconnect', socket)
+    // socket.emit('disconnect')
+    // socket.disconnect()
+  }
+
   socket.on('error', function (err) {
     console.log('received socket error:')
     console.log(err)
@@ -58,7 +64,8 @@ export default function () {
     getChatrooms,
     getAvailableUsers,
     registerHandler,
-    unregisterHandler
+    unregisterHandler,
+    disconnect
   }
 
   return obj

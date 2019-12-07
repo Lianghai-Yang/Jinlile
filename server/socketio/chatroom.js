@@ -1,5 +1,6 @@
 const data = require("../database/src");
 const groups = data.groups;
+const users = data.users;
 
 module.exports = function ({ _id, image, messages }) {
     const members = new Map()
@@ -34,8 +35,9 @@ module.exports = function ({ _id, image, messages }) {
       console.log('add entry')
       // chatHistory = chatHistory.concat(entry)
       if ('message' in entry){
-          await groups.addMessageToGroupById(_id, entry.user._id, 
-                      entry.user.name, entry.message.text, entry.message.date)
+          let user = await users.getById(entry.user._id)
+          await groups.addMessageToGroupById(_id, user._id, 
+                      user.name, entry.message.text, entry.message.date)
       }
       let group = await groups.getById(_id)
       transferHistory(group.messages)

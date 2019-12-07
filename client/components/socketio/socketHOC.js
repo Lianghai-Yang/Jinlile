@@ -1,12 +1,19 @@
 import React, { Component } from 'react'
 import socketFunc from './socketFunc'
+const io = require('socket.io-client')
 
 var socketState = {
   client: null,
-  // user: null,
-  // group: null,
   roomEntered: false,
   chatHistory: []
+}
+
+function disconnectSocket(){
+  console.log('on client disconnectSocket')
+  socketState.client.disconnect()
+  socketState.client = null
+  socketState.roomEntered = false
+  socketState.chatHistory = []
 }
 
 function resetSocket(){
@@ -59,6 +66,7 @@ const socketWrapper = (ComponentToWrap) => {
         this.onEnterChatroom = this.onEnterChatroom.bind(this)
         this.onLeaveChatroom = this.onLeaveChatroom.bind(this)
         this.register = this.register.bind(this)
+        this.onLogOut = this.onLogOut.bind(this)
         this.onMessageReceived = this.onMessageReceived.bind(this)
         this.getUserGroup = this.getUserGroup.bind(this)
     }
@@ -71,12 +79,18 @@ const socketWrapper = (ComponentToWrap) => {
     }
 
     componentDidMount(){
+      socketState = socketHandler(null, null)
+      this.setState({
+        socketState, socketState
+      })
+      console.log('HOC did mount', this.state.socketState)
       if (this.state.socketState.roomEntered === false){
         let {user, group} = this.getUserGroup()
         user = user
         group = group
-        
+        console.log('hoc did mount enter, user and group',user, group)
         let client = retSocketState('client')
+        console.log(client)
         if (client === null){
           client = socketFunc()
           this.register(client, user._id)
@@ -115,7 +129,10 @@ const socketWrapper = (ComponentToWrap) => {
     }
 
     componentWillUnmount() {
-      this.state.socketState.client.unregisterHandler()
+      let client = retSocketState('client')
+      if (client){
+        client.unregisterHandler()
+      }
     }
 
     getUserGroup(){
@@ -145,10 +162,16 @@ const socketWrapper = (ComponentToWrap) => {
       })
     }
 
+    onLogOut() {
+      disconnectSocket()
+    }
+
     register(client, name) {
-      client.register(name, (err, user) => {
-        return null
-      })
+      if (client){
+        client.register(name, (err, user) => {
+          return null
+        })
+      }
     }
 
     onMessageReceived(entry) {
@@ -167,6 +190,9 @@ const socketWrapper = (ComponentToWrap) => {
     render() {
       return (
         <ComponentToWrap
+        onLogOut = {
+          () => this.onLogOut()
+        }
         onLeave = {
           () => this.onLeaveChatroom(
             JSON.parse(localStorage.getItem('group')).groupId,
@@ -181,8 +207,8 @@ const socketWrapper = (ComponentToWrap) => {
             cb
           )
         }
-        user={JSON.parse(localStorage.getItem('user'))}
-        group={JSON.parse(localStorage.getItem('group'))}
+        //user={JSON.parse(localStorage.getItem('user'))}
+        //group={JSON.parse(localStorage.getItem('group'))}
         chatHistory={retSocketState('chatHistory')}
         {...this.props}
         />

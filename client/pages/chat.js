@@ -54,14 +54,25 @@ class Chat extends React.Component {
 
     messageList() {
         let list = []
+        let user = JSON.parse(localStorage.getItem('user'))
         //let { messages } = this.state
         let messages = this.props.chatHistory
         for (let i = 0; i < messages.length; i ++) {
-            let msg = messages[i]
-            if(msg.userId === this.props.user._id){
+            let msg = JSON.parse(JSON.stringify(messages[i]))
+            if(msg.userId === user._id){
                 msg.position = 'right'
+            }else{
+                msg.position = 'left'
             }
-            else{msg.position = 'left'}
+            
+            if (msg.type == 'emergency'){
+                msg.type = 'text'
+            }
+            msg.text = msg.text.split('<br/>\n').map((item, i) => {
+                return <p key={i}>{item}</p>;
+            });
+
+            msg.date = new Date(msg.date)
             list.push(
                 <div className={`d-flex mb-4 ${msg.position}-box`} key={`msg-${i}`}>
                     <Icon className={msg.position} name={msg.title} style={{ width: '28px', height: '28px', flexShrink: 0 }} />
@@ -93,10 +104,12 @@ class Chat extends React.Component {
     }
 
     sendMessage() {
+        let user=JSON.parse(localStorage.getItem('user'))
+        
         let textAreaArr = this.refs.input.input
         this.addMessage({
-            userId: this.props.user._id,
-            title: this.props.user.name,
+            userId: user._id,
+            title: user.name,
             position: "right",
             type: "text",
             text: textAreaArr.value,
@@ -106,8 +119,9 @@ class Chat extends React.Component {
     }
     
     render() {
+        let group = JSON.parse(localStorage.getItem('group'))
         return (
-            <Layout title={this.props.group.groupName} sideIconLeft={this.sideIconLeft} sideIconRight={this.sideIconRight}>
+            <Layout title={group.groupName} sideIconLeft={this.sideIconLeft} sideIconRight={this.sideIconRight}>
                 <Container fluid={true} className="d-flex flex-column flex-grow-1 flex-shrink-0" style={{height: '0 !important', overflow: 'hidden'}}>
                     <div ref="chatBody" className="chat-body mt-3 flex-grow-1 flex-shrink-0">
                         {this.messageList()}

@@ -189,10 +189,13 @@ class Map extends React.Component {
     }
 
     sendMessage() {
+        let user = JSON.parse(localStorage.getItem('user'))
+        let group = JSON.parse(localStorage.getItem('group'))
+        
         let input = document.getElementById('message-input')
         let msg = {
-            userId: this.props.user._id,
-            title: this.props.user.name,
+            userId: user._id,
+            title: user.name,
             position: 'right',
             type: 'text',
             text: input.value,
@@ -212,11 +215,17 @@ class Map extends React.Component {
             ...this.state.toast,
             show: false
         }
+        // msg = JSON.parse(JSON.stringify(msg))
+        // msg = msg.split('\n').map((item, i) => {
+        //     return <p key={i}>{item}</p>;
+        // });
+        // type = 'text'
 
-        let helpMsg = null
-        if (type == 'emergency') {
-            helpMsg = `////////////////<br/>\nPLEASE HELP ME!\n////////////////`
-        }
+        let helpMsg = msg
+        // let helpMsg = null
+        // if (type == 'emergency') {
+        //     helpMsg = `////////////////<br/>\nPLEASE HELP ME!<br/>\n////////////////`
+        // }
 
         return (
             <>
@@ -248,10 +257,19 @@ class Map extends React.Component {
     }
 
     async needHelp() {
-        let helpMsg = ''
+        let user = JSON.parse(localStorage.getItem('user'))
+        
+        let data = await this.getFriendsPosition()
+        data = data.find(m=>{return m.userId == user._id})
+        console.log(data)
+        
+        let helpMsg = `!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<br/>\n
+                        PLEASE HELP ME!<br/>\n
+                        lat: ${data.lat}; <br/>\n lng: ${data.lng}; <br/>\n
+                       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!`
         let msg = {
-            userId: this.props.user._id,
-            title: this.props.user.name,
+            userId: user._id,
+            title: user.name,
             position: 'right',
             type: 'emergency',
             text: helpMsg,

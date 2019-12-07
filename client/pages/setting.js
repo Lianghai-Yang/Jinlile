@@ -93,6 +93,7 @@ class Setting extends React.Component{
         try {
             // let params = {newName:newName};
             // let {data} = await axios.put('/users/userName', params);
+            this.props.onLeave()
             let params = { groupId: this.state.groupId };
             let { data } = await axios.post(`/users/dismissGroup`, params);
             //console.log(data);
@@ -126,6 +127,8 @@ class Setting extends React.Component{
     }
 
     async handleLogOut() {
+        console.log('on setting logout')
+        this.props.onLogOut()
         await axios.post(`/users/logout`);
         this.props.router.replace('/login')
     }
