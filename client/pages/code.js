@@ -38,7 +38,8 @@ class Code extends React.Component {
     async handleNumberChange(event) {
         let keyCode = event.keyCode
         let currentInput = event.currentTarget
-
+        let value = currentInput.value
+        
         // backspace
         if (keyCode == 8) {
             let prevInput = currentInput.previousElementSibling
@@ -48,15 +49,16 @@ class Code extends React.Component {
             return
         }
         
-        let range = keyCode - '0'.charCodeAt(0);
-        if (range > 9 || range < 0) {
+        let range = value - '0'
+        if (isNaN(range)) {
             event.preventDefault()
+            currentInput.value = ''
             return false
         }
 
         let nextInput = currentInput.nextElementSibling
 
-        currentInput.value = event.key
+        // currentInput.value = event.key
         event.preventDefault()
         
         if (nextInput != null) {
@@ -116,10 +118,10 @@ class Code extends React.Component {
                         <div className="input-container">
                             <p className="text-muted">We have sent an email to you. <br /> Please enter the code in your email below:</p>
                             <div className="d-flex justify-content-center mt-5">
-                                <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
-                                <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
-                                <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
-                                <Form.Control onKeyDown={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
+                                <Form.Control type="text" onKeyUp={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
+                                <Form.Control type="text" onKeyUp={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
+                                <Form.Control type="text" onKeyUp={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
+                                <Form.Control type="text" onKeyUp={event => this.handleNumberChange(event)} maxLength="1" className="number-input ml-2 mr-2" />
                             </div>
                             <p className="text-muted mt-5">Or you would like to change your email address? Click <Link replace href="/login"><a>HERE</a></Link> </p>
                         </div>

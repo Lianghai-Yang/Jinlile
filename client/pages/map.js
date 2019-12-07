@@ -166,7 +166,7 @@ class Map extends React.Component {
     sideIconleft() {
         return (
             <a onClick={() => this.props.router.push("/chat")}>
-                <a><FaComments color="#007bff" size="1.5rem" className="flex-grow-0" /></a>
+                <FaComments color="#007bff" size="1.5rem" className="flex-grow-0" />
              </a>
         )
     }

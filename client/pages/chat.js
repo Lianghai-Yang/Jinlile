@@ -1,4 +1,3 @@
-import 'react-chat-elements/dist/main.css'
 import React from 'react'
 import Link from 'next/link'
 import Layout from '../components/layout'

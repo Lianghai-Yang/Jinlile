@@ -4,6 +4,7 @@ import Nav from '../components/nav'
 import { start } from '../events'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../jinlile.client.config'
+import 'react-chat-elements/dist/main.css'
 
 class Layout extends React.Component {
   constructor(props) {
