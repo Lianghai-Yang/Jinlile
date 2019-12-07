@@ -103,7 +103,7 @@ const addMessageToGroupById = async(groupId, userId, userName, content, time) =>
     //let bool = userList.filter(userList => (userList.userName === userName));
     var found = false;
     for(var i = 0; i < userList.length; i++) {
-        if (userList[i].userName == userName) {
+        if (userList[i].userId == userId) {
             found = true;
             break;
         }
