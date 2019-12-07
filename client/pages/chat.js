@@ -48,6 +48,10 @@ class Chat extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.scrollDown()
+    }
+
     messageList() {
         let list = []
         //let { messages } = this.state
