@@ -44,6 +44,7 @@ class Map extends React.Component {
                 from: '',
                 time: '',
                 show: false,
+                type: ''
             },
             group
         }
@@ -176,15 +177,12 @@ class Map extends React.Component {
             let chatHistory = this.props.chatHistory
             if (chatHistory.length>0){
                 let newmessage = chatHistory[chatHistory.length-1]
-                let msg = newmessage.text
-                let from = newmessage.title
-                let msgDate = newmessage.date
+                let { text: msg, title: from, date: msgDate, type } = newmessage
                 let nowDate = new Date()
                 let diffDate = nowDate.getTime() - msgDate.getTime()
                 diffDate = diffDate/1000
-                console.log('diffData',diffDate)
                 if (diffDate<=60){
-                    this.showToast({ msg, from: from, time: 'Now' })
+                    this.showToast({ msg, from, time: 'Now', type })
                 }
             }
         }
@@ -202,18 +200,24 @@ class Map extends React.Component {
         }
         this.props.onSendMessage(msg, (err) => {
             return null
-          })
+        })
         
         // this.showToast({ msg, from: 'You', time: 'Now' })
         input.value = ""
     }
 
     toast() {
-        let { show, time, msg, from } = this.state.toast
+        let { show, time, msg, from, type } = this.state.toast
         let newToastState = {
             ...this.state.toast,
             show: false
         }
+
+        let helpMsg = null
+        if (type == 'emergency') {
+            helpMsg = `////////////////<br/>\nPLEASE HELP ME!\n////////////////`
+        }
+
         return (
             <>
             <Toast className="mt-3 align-self-center" style={{ display: show ? 'block' : 'none', zIndex: 1, width: '300px' }} show={show} onClose={() => this.setState({ ...this.state, toast: newToastState })}>
@@ -222,40 +226,40 @@ class Map extends React.Component {
                     <strong className="mr-auto">{from}</strong>
                     <small>{time}</small>
                 </Toast.Header>
-                <Toast.Body style={{ wordBreak: 'break-word' }}>{msg}</Toast.Body>
+                <Toast.Body style={{ wordBreak: 'break-word' }}>
+                    { type == 'emergency' ? <div dangerouslySetInnerHTML={{ __html: helpMsg }}></div> : msg }
+                </Toast.Body>
             </Toast>
             </>
         )
     }
 
-    showToast({ msg, from, time, show=true}) {
+    showToast({ msg, from, time, show=true, type }) {
         this.setState({
             ...this.state,
             toast: {
                 msg,
                 from,
                 time,
-                show
+                show,
+                type,
             }
         })
     }
 
     async needHelp() {
-        let data = await this.getFriendsPosition()
-        data = data.find(m=>{return m.userId == this.props.user._id})
-        console.log(data)
-        let helpMsg = `////////////////<br/> lat: ${data.lat}; lng: ${data.lng}\nPLEASE HELP ME!\n////////////////`
+        let helpMsg = ''
         let msg = {
             userId: this.props.user._id,
             title: this.props.user.name,
             position: 'right',
-            type: 'text',
+            type: 'emergency',
             text: helpMsg,
             date: new Date()
         }
         this.props.onSendMessage(msg, (err) => {
             return null
-          })
+        })
         // alert('Come to me! I need HELP!')
     }
     
