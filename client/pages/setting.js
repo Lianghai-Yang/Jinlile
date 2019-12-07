@@ -25,8 +25,8 @@ class Setting extends React.Component{
     }
 
     async componentDidMount() {
-        const group = JSON.parse(localStorage.getItem('group'));
-        const userName = localStorage.getItem('userName');
+        const group = JSON.parse(window.localStorage.getItem('group'));
+        const userName = window.localStorage.getItem('userName');
 
         this.setState({
             ...this.state,
@@ -57,10 +57,10 @@ class Setting extends React.Component{
             //console.log(data);
             // console.log('before change name', data)
             if(data.user){
-                let newUser = JSON.parse(localStorage.getItem('user'))
+                let newUser = JSON.parse(window.localStorage.getItem('user'))
                 newUser.name = data.user.name
-                localStorage.setItem('user', JSON.stringify(newUser));
-                localStorage.setItem('userName', data.user.name);
+                window.localStorage.setItem('user', JSON.stringify(newUser));
+                window.localStorage.setItem('userName', data.user.name);
                 this.setState({
                     userName:data.user.name,
                     alert: {
@@ -134,21 +134,11 @@ class Setting extends React.Component{
     }
 
     sideIconLeft() {
-        const prevPage = localStorage.getItem('back');
-        if(prevPage == 'chat'){
-            return (
-                <Link href="/chat">
-                    <a><FaAngleLeft color="#007bff" size="1.5rem" className="flex-grow-0" /></a>
-                 </Link>
-             )
-        }
-        else{
-            return (
-                <Link href="/map">
-                    <a><FaAngleLeft color="#007bff" size="1.5rem" className="flex-grow-0" /></a>
-                 </Link>
-             )
-        }
+        return (
+            <a onClick={() => window.history.back()}>
+                <FaAngleLeft color="#007bff" size="1.5rem" className="flex-grow-0" />
+            </a>
+        )
     }
 
     render() {
