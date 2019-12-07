@@ -116,9 +116,9 @@ class Chat extends React.Component {
                             inputStyle={{ backgroundColor: '#eee' }}
                             rightButtons={
                                 <Button
-                                    text={<FaPaperPlane style={{width: '60px'}}
                                     onClick={this.sendMessage.bind(this)}
-                                    />} />
+                                    text={<FaPaperPlane style={{width: '60px'}}/>}
+                                ></Button>
                             }
                         />
                     </div>
