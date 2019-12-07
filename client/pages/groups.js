@@ -28,7 +28,7 @@ class Groups extends React.Component {
 
     async getGroups() {
         try{
-            const user = JSON.parse(localStorage.getItem('user'));
+            const user = JSON.parse(localStorage.getItem('user'))
             const uid = user._id;
             const { data } = await axios.get(`/users/${uid}`);
             localStorage.setItem('userName',data.name);
@@ -41,6 +41,7 @@ class Groups extends React.Component {
             // ]
             return groups;
         }catch (e) {
+            console.log(e)
             switch(e.response.status) {
                 case 404:
                     let { router } = this.props

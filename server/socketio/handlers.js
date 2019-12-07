@@ -60,7 +60,8 @@ module.exports = function (client, clientManager, chatroomManager) {
     }
   
     function handleJoin(chatroomId, callback) {
-      chatroomManager.addRoom(chatroomId)
+      chatroomManager.getChatroomById(chatroomId)
+      // chatroomManager.addRoom(chatroomId)
       const createEntry = () => ({ event: `joined ${chatroomId}` })
       handleEvent(chatroomId, createEntry)
         .then(function (chatroom) {
@@ -74,11 +75,13 @@ module.exports = function (client, clientManager, chatroomManager) {
     }
   
     function handleLeave(chatroomId, callback) {
+      console.log('leave room', chatroomId)
       const createEntry = () => ({ event: `left ${chatroomId}` })
   
       handleEvent(chatroomId, createEntry)
         .then(function (chatroom) {
           // remove member from chatroom
+          console.log('removed client',client.id)
           chatroom.removeUser(client.id)
           callback(null)
         })
@@ -86,7 +89,7 @@ module.exports = function (client, clientManager, chatroomManager) {
     }
   
     function handleMessage({ chatroomId, message } = {}, callback) {
-      console.log("handle messages", chatroomId, message)
+      console.log("handle messages", chatroomId)
       const createEntry = () => ({ message })
       // ecfa6afe-4e1e-43f9-9e16-d5c2d0823006
       handleEvent(chatroomId, createEntry)

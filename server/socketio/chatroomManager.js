@@ -16,10 +16,11 @@ module.exports = function () {
   // )
   async function addRoom(chatroomId) {
     let group = await groups.getById(chatroomId)
-    console.log('add room', group)
+    console.log('add room', chatroomId)
     if (chatrooms.get(group._id) === undefined){
       chatrooms.set(group._id, Chatroom(group))
     }
+    console.log(chatrooms)
   }
 
   function removeClient(client) {
@@ -28,6 +29,7 @@ module.exports = function () {
 
   async function getChatroomById(chatroomId) {
     await addRoom(chatroomId)
+    
     //return await groups.getByGroupName(chatroomName)
     return chatrooms.get(chatroomId)
   }

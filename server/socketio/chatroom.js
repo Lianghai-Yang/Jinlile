@@ -3,30 +3,33 @@ const groups = data.groups;
 
 module.exports = function ({ _id, image, messages }) {
     const members = new Map()
-    let chatHistory = []
-
-    // console.log(messages)
-    for (let i=0; i<messages.length; i++){
-      chatHistory.push({
-        message: {
-            userId: messages[i].userId,
-            title: messages[i].userName,
-            position: 'left',
-            type: 'text',
-            text: messages[i].content,
-            date: messages[i].time
-            }
-      })
-      
+    
+    function transferHistory(messages){
+      let chatHistory = []
+      for (let i=0; i<messages.length; i++){
+        chatHistory.push({
+          message: {
+              userId: messages[i].userId,
+              title: messages[i].userName,
+              position: 'left',
+              type: 'text',
+              text: messages[i].content,
+              date: messages[i].time
+              }
+        })
+      }
+      console.log(chatHistory)
+      return chatHistory
     }
+    
 
     function broadcastMessage(message) {
       members.forEach(m => m.emit('message', message))
     }
   
     async function addEntry(entry) {
-      console.log('add entry', entry)
-      chatHistory = chatHistory.concat(entry)
+      console.log('add entry')
+      // chatHistory = chatHistory.concat(entry)
       if ('message' in entry){
           await groups.addMessageToGroupById(_id, entry.user._id, 
                       entry.user.name, entry.message.text, entry.message.date)
@@ -34,7 +37,9 @@ module.exports = function ({ _id, image, messages }) {
       // console.log(chatHistory)
     }
   
-    function getChatHistory() {
+    async function getChatHistory() {
+      let group = await groups.getById(_id)
+      let chatHistory = transferHistory(group.messages)
       return chatHistory.slice()
     }
   

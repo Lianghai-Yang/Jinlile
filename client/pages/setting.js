@@ -4,6 +4,8 @@ import ListGroup from 'react-bootstrap/ListGroup'
 import { Button, Container, Alert } from 'react-bootstrap'
 import { withRouter } from "next/router";
 import axios from "axios";
+import socketWrapper from '../components/socketio/socketHOC'
+
 //import withAuthentication from '../components/withAuthentication'
 
 class Setting extends React.Component{
@@ -51,8 +53,12 @@ class Setting extends React.Component{
             let params = { newName:newName };
             let { data } = await axios.post(`/users/userName`, params);
             //console.log(data);
+            // console.log('before change name', data)
             if(data.user){
-                localStorage.setItem('userName',data.user.name);
+                let newUser = JSON.parse(localStorage.getItem('user'))
+                newUser.name = data.user.name
+                localStorage.setItem('user', JSON.stringify(newUser));
+                localStorage.setItem('userName', data.user.name);
                 this.setState({
                     userName:data.user.name,
                     alert: {
@@ -62,6 +68,7 @@ class Setting extends React.Component{
                 })
             }
             else{
+                console.log('wrong branch')
                 this.setState({
                     alert: {
                         show: true,
@@ -69,8 +76,8 @@ class Setting extends React.Component{
                     }
                 })
             }
-        }
-        catch(e) {
+        }catch(e) {
+            console.log(e)
             this.setState({
                 alert: {
                     show: true,
@@ -111,6 +118,7 @@ class Setting extends React.Component{
     }
 
     handleLogToOtherGroup() {
+        this.props.onLeave()
         this.props.router.replace('/groups')
     }
 
@@ -164,4 +172,4 @@ class Setting extends React.Component{
 
 }
 
-export default withRouter(Setting)
+export default socketWrapper(withRouter(Setting))

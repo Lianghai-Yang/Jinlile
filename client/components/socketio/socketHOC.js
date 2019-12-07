@@ -9,6 +9,12 @@ var socketState = {
   chatHistory: []
 }
 
+function resetSocket(){
+  socketState.client.unregisterHandler()
+  socketState.roomEntered = false
+  socketState.chatHistory = []
+}
+
 function changeName(id, newName){
   for (let i=0; i<socketState.chatHistory.length; i++){
     if (socketState.chatHistory[i].userId == id){
@@ -70,12 +76,13 @@ const socketWrapper = (ComponentToWrap) => {
         user = user
         group = group
         
-        let client = socketFunc()
+        let client = retSocketState('client')
+        if (client === null){
+          client = socketFunc()
+          this.register(client, user._id)
+          socketState = socketHandler('client', client)
+        }
         let roomEntered = true
-        this.register(client, user._id)
-        // socketHandler('user', user)
-        // socketHandler('group', group)
-        socketState = socketHandler('client', client)
         this.setState({
           socketState, socketState
         })
@@ -163,8 +170,7 @@ const socketWrapper = (ComponentToWrap) => {
         onLeave = {
           () => this.onLeaveChatroom(
             JSON.parse(localStorage.getItem('group')).groupId,
-            //retSocketState('group').groupId,
-            () => null
+            () => resetSocket()
           )
         }
         onSendMessage = {
