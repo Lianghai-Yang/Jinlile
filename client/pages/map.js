@@ -219,12 +219,15 @@ class Map extends React.Component {
         //     return <p key={i}>{item}</p>;
         // });
         // type = 'text'
-
-        let helpMsg = msg
-        // let helpMsg = null
-        // if (type == 'emergency') {
-        //     helpMsg = `////////////////<br/>\nPLEASE HELP ME!<br/>\n////////////////`
-        // }
+        //let helpMsg = msg
+        
+        let helpMsg = null
+        if (type == 'emergency') {
+            helpMsg = `<div style = "color: red">
+            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!<br/>\n
+            !PLEASE HELP ME!<br/>\n
+            !!!!!!!!!!!!!!!!!!!!!!!!!!!!!</div>`
+        }
 
         return (
             <>
