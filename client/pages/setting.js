@@ -4,7 +4,9 @@ import ListGroup from 'react-bootstrap/ListGroup'
 import { Button, Container, Alert } from 'react-bootstrap'
 import { withRouter } from "next/router";
 import axios from "axios";
-import socketWrapper from '../components/socketio/socketHOC'
+import socketWrapper from '../components/socketio/socketHOC';
+import { FaAngleLeft } from "react-icons/fa";
+import Link from 'next/link';
 
 //import withAuthentication from '../components/withAuthentication'
 
@@ -108,6 +110,7 @@ class Setting extends React.Component{
             }
         }
         catch(e) {
+            console.log(e)
             this.setState({
                 alert: {
                     show: true,
@@ -122,9 +125,32 @@ class Setting extends React.Component{
         this.props.router.replace('/groups')
     }
 
+    async handleLogOut() {
+        await axios.post(`/users/logout`);
+        this.props.router.replace('/login')
+    }
+
+    sideIconLeft() {
+        const prevPage = localStorage.getItem('back');
+        if(prevPage == 'chat'){
+            return (
+                <Link href="/chat">
+                    <a><FaAngleLeft color="#007bff" size="1.5rem" className="flex-grow-0" /></a>
+                 </Link>
+             )
+        }
+        else{
+            return (
+                <Link href="/map">
+                    <a><FaAngleLeft color="#007bff" size="1.5rem" className="flex-grow-0" /></a>
+                 </Link>
+             )
+        }
+    }
+
     render() {
         return (
-            <Layout>
+            <Layout title={"Setting"} sideIconLeft={this.sideIconLeft}>
                 <Container>
                     <div>
                         <ListGroup className="mt-4" variant="flush">            
@@ -164,6 +190,9 @@ class Setting extends React.Component{
                             </ListGroup.Item>
 
                         </ListGroup>
+                    </div>
+                    <div className="mt-5">
+                        <Button onClick={this.handleLogOut.bind(this)} variant="dark" size="lg" className="btn-block">Logout</Button>
                     </div>
                 </Container>
             </Layout>

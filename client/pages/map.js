@@ -156,6 +156,7 @@ class Map extends React.Component {
     }
 
     sideIconRight() {
+        localStorage.setItem('back',"map");
         return (
             //<FaBars color="#007bff" size="1.5rem" onClick={() => alert('testing')} className="flex-grow-0" />
             <FaBars color="#007bff" size="1.5rem" onClick={() => this.props.router.replace('/setting')} className="flex-grow-0" />

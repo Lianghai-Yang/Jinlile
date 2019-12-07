@@ -29,8 +29,11 @@ class Chat extends React.Component {
     }
 
     sideIconRight() {
+        localStorage.setItem('back',"chat");
         return (
-            <FaBars size="1.5rem" color="#007bff" />
+            <Link href="/setting">
+                <FaBars size="1.5rem" color="#007bff" />
+            </Link>
         )
     }
 
