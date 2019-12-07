@@ -3,9 +3,12 @@ const groups = data.groups;
 
 module.exports = function ({ _id, image, messages }) {
     const members = new Map()
+    let chatHistory = []
     
+    transferHistory(messages)
+
     function transferHistory(messages){
-      let chatHistory = []
+      chatHistory = []
       for (let i=0; i<messages.length; i++){
         chatHistory.push({
           message: {
@@ -34,12 +37,14 @@ module.exports = function ({ _id, image, messages }) {
           await groups.addMessageToGroupById(_id, entry.user._id, 
                       entry.user.name, entry.message.text, entry.message.date)
       }
+      let group = await groups.getById(_id)
+      transferHistory(group.messages)
       // console.log(chatHistory)
     }
   
-    async function getChatHistory() {
-      let group = await groups.getById(_id)
-      let chatHistory = transferHistory(group.messages)
+    function getChatHistory() {
+      //let group = await groups.getById(_id)
+      //transferHistory(group.messages)
       return chatHistory.slice()
     }
   
