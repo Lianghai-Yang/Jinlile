@@ -131,6 +131,8 @@ class Setting extends React.Component{
         this.props.onLogOut()
         await axios.post(`/users/logout`);
         this.props.router.replace('/login')
+        window.location.replace('/login')
+        console.log('finish logout')
     }
 
     sideIconLeft() {
