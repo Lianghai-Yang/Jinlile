@@ -101,6 +101,16 @@ router.use(authenticate)
 //   }
 // })
 
+router.post('/logout', async (req,res) =>{
+  try{
+    req.session = undefined;
+    res.send({ msg: 'logout' });
+  }catch(e){
+    console.log(e)
+    res.sendStatus(500);
+  }
+})
+
 router.post('/userName', async (req,res) =>{
   const newNameInfo = req.body;
   let {newName} = newNameInfo;
