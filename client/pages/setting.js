@@ -130,6 +130,7 @@ class Setting extends React.Component{
         console.log('on setting logout')
         this.props.onLogOut()
         await axios.post(`/users/logout`);
+        localStorage.clear();
         this.props.router.replace('/login')
         window.location.replace('/login')
         console.log('finish logout')
