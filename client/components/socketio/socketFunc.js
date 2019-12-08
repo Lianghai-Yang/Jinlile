@@ -9,12 +9,32 @@ export default function () {
     return obj
   }
   
-  socket = io.connect(config.socketio_url)
-
+  socket = io.connect(config.socketio_url,{
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax : 5000,
+      reconnectionAttempts: 99999
+  })
+  
   console.log('socket io connect...........')
   
+  function state(){
+    return socket
+  }
+ 
+
   function registerHandler(onMessageReceived) {
     socket.on('message', onMessageReceived)
+  }
+
+  function disAndReconnect(disconnect, reconnect) {
+    socket.on('disconnect', disconnect)
+    socket.on('reconnect', reconnect)
+  }
+
+  function unRegisterDisAndReconnect() {
+    socket.off('disconnect')
+    socket.off('reconnect')
   }
 
   function unregisterHandler() {
@@ -65,7 +85,10 @@ export default function () {
     getAvailableUsers,
     registerHandler,
     unregisterHandler,
-    disconnect
+    disconnect,
+    state,
+    disAndReconnect,
+    unRegisterDisAndReconnect
   }
 
   return obj

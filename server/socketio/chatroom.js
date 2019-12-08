@@ -22,7 +22,7 @@ module.exports = function ({ _id, image, messages }) {
               }
         })
       }
-      console.log(chatHistory)
+      //console.log(chatHistory)
       return chatHistory
     }
     

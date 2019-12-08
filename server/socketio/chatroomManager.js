@@ -20,7 +20,7 @@ module.exports = function () {
     if (chatrooms.get(group._id) === undefined){
       chatrooms.set(group._id, Chatroom(group))
     }
-    console.log(chatrooms)
+    //console.log(chatrooms)
   }
 
   function removeClient(client) {

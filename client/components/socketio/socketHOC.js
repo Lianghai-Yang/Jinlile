@@ -49,6 +49,11 @@ function addregisterHandler(func) {
     return socketState
 }
 
+function addDisAndReconnect(disconnect, reconnect) {
+  socketState.client.disAndReconnect(disconnect, reconnect)
+  return socketState
+}
+
 function addHistory(entry) {
   socketState.chatHistory = socketState.chatHistory.concat(entry)
   return socketState
@@ -69,70 +74,94 @@ const socketWrapper = (ComponentToWrap) => {
         this.onLogOut = this.onLogOut.bind(this)
         this.onMessageReceived = this.onMessageReceived.bind(this)
         this.getUserGroup = this.getUserGroup.bind(this)
+        this.disconnect = this.disconnect.bind(this)
+        this.reconnect = this.reconnect.bind(this)
     }
 
     componentDidUpdate(_, prevState) {
+      console.log('...componentDidupdate...')
       if (this.state.chatHistory !== prevState.chatHistory){
         socketState = socketHandler('chatHistory', this.state.chatHistory)
         this.setState({socketState, socketState})
       }
     }
 
-    componentDidMount(){
+    addUserandEnterToom() {
       socketState = socketHandler(null, null)
       this.setState({
         socketState, socketState
       })
       console.log('HOC did mount', this.state.socketState)
-      if (this.state.socketState.roomEntered === false){
-        let {user, group} = this.getUserGroup()
-        user = user
-        group = group
-        console.log('hoc did mount enter, user and group',user, group)
-        let client = retSocketState('client')
-        console.log(client)
-        if (client === null){
-          client = socketFunc()
+      if (socketState.roomEntered === false){
+          let {user, group} = this.getUserGroup()
+          user = user
+          group = group
+          console.log('hoc did mount enter, user and group',user, group)
+          let client = retSocketState('client')
+          console.log(client)
+          if (client === null){
+            client = socketFunc()
+          }
           this.register(client, user._id)
           socketState = socketHandler('client', client)
-        }
-        let roomEntered = true
-        this.setState({
-          socketState, socketState
-        })
+          
+          let roomEntered = true
+          this.setState({
+            socketState, socketState
+          })
 
-        this.onEnterChatroom(
-          group.groupId,
-          () => null,
-          chatHistoryServer => {
-            console.log('on enter chat room and get history:')
-            let filtedChatHistory = []
-            for (let i=0; i<chatHistoryServer.length; i++){
-                if ('message' in chatHistoryServer[i]){
-                    let message = chatHistoryServer[i].message
-                    message.date = new Date(message.date)
-                    filtedChatHistory.push(message)
-                }
+          this.onEnterChatroom(
+            group.groupId,
+            () => null,
+            chatHistoryServer => {
+              console.log('on enter chat room and get history:')
+              let filtedChatHistory = []
+              for (let i=0; i<chatHistoryServer.length; i++){
+                  if ('message' in chatHistoryServer[i]){
+                      let message = chatHistoryServer[i].message
+                      message.date = new Date(message.date)
+                      filtedChatHistory.push(message)
+                  }
+              }
+              this.setState({chatHistory: filtedChatHistory}) 
             }
-            this.setState({chatHistory: filtedChatHistory}) 
-          }
-        )
-        socketState = socketHandler('roomEntered', roomEntered)
-        this.setState({
-          socketState, socketState
-        })
-        console.log('socketState:', socketState)
+          )
+          socketState = socketHandler('roomEntered', roomEntered)
+          this.setState({
+            socketState, socketState
+          })
+          console.log('socketState:', socketState)
+      }
+      let client = retSocketState('client')
+      if (client){
+        client.unregisterHandler()
+        client.unRegisterDisAndReconnect()
       }
       addregisterHandler(this.onMessageReceived)
+      addDisAndReconnect(this.disconnect, this.reconnect)
       console.log('HOC state', this.state)
       //console.log('ret group', retSocketState('group').groupId)
+    }
+
+    componentDidMount(){
+      this.addUserandEnterToom()
     }
 
     componentWillUnmount() {
       let client = retSocketState('client')
       if (client){
         client.unregisterHandler()
+        client.unRegisterDisAndReconnect()
       }
+    }
+
+    disconnect() {
+      socketHandler('roomEntered', false)
+    }
+
+    reconnect() {
+      console.log('try to reconnect')
+      this.addUserandEnterToom()
     }
 
     getUserGroup(){
@@ -185,6 +214,16 @@ const socketWrapper = (ComponentToWrap) => {
       this.setState({
         socketState: socketHandler(null, null)
       })
+    }
+
+    getSocketState(){
+      let socket = retSocketState('client')
+      if (socket){
+        return socket.state().id
+      }
+      else{
+        return socket
+      }
     }
 
     render() {
