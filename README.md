@@ -1,5 +1,7 @@
 # Jinlile
 
+In order to have a better experience, you can use your phone to test. When we developing this platform, we have tried various way to fix bugs caused by storage from the front end. It seems that we have fix all. But to make our platform running smoothly, we recommend you to use the private mode in your phone or incognito mode in your browser. Thank you!
+
 ## Live Demo:
 
 [Jinlile](https://jinlile.tech)
