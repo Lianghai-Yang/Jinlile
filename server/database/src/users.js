@@ -50,7 +50,7 @@ const removeById = async (id) =>{
 const getByUserName = async(userName, projection={}) => {
   if (!userName) throw "You must provide a userName to search for";
   const userCollection = await users();
-  const userGo = await userCollection.findOne({name: userName}, { projection: projection });
+  const userGo = await userCollection.findOne({name: { $regex : new RegExp(userName, "i") }}, { projection: projection });
   if (userGo === null) throw "No user with that name";
   return userGo;
 };
@@ -65,7 +65,7 @@ const addGroupToUser = async (userName,groupId,groupName) =>{
     const targetUser = await getByUserName(userName);
     let groupList = targetUser.groups;
     groupList.push({groupId,groupName});
-    await userCollection.updateOne({name: userName},{$set: { "groups": groupList }});
+    await userCollection.updateOne({name: { $regex : new RegExp(userName, "i") }},{$set: { "groups": groupList }});
     return await getByUserName(userName);
 }
 
